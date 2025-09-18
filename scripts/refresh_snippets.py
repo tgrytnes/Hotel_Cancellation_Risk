@@ -3,7 +3,7 @@
 Refresh embedded source snippets inside notebooks/main.ipynb.
 
 It updates the Markdown <details> blocks with code fences so they reflect
-the current contents of files in src/yourproj/.
+the current contents of files in src/hcr/.
 
 Usage: python3 scripts/refresh_snippets.py
 """
@@ -14,14 +14,14 @@ from pathlib import Path
 NB = Path("notebooks/main.ipynb")
 
 FILES = {
-    "src-config-py": Path("src/yourproj/config.py"),
-    "src-ingest-py": Path("src/yourproj/ingest.py"),
-    "src-preprocess-py": Path("src/yourproj/preprocess.py"),
-    "src-features-py": Path("src/yourproj/features.py"),
-    "src-labels-py": Path("src/yourproj/labels.py"),
-    "src-models-py": Path("src/yourproj/models.py"),
-    "src-train-py": Path("src/yourproj/train.py"),
-    "src-eval-py": Path("src/yourproj/eval.py"),
+    "src-config-py": Path("src/hcr/config.py"),
+    "src-ingest-py": Path("src/hcr/ingest.py"),
+    "src-preprocess-py": Path("src/hcr/preprocess.py"),
+    "src-features-py": Path("src/hcr/features.py"),
+    "src-labels-py": Path("src/hcr/labels.py"),
+    "src-models-py": Path("src/hcr/models.py"),
+    "src-train-py": Path("src/hcr/train.py"),
+    "src-eval-py": Path("src/hcr/eval.py"),
 }
 
 

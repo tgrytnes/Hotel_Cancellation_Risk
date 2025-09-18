@@ -1,5 +1,5 @@
 [project]
-name = "yourproj"
+name = "hcr"
 version = "0.3.0"
 requires-python = ">=3.10"
 dependencies = [

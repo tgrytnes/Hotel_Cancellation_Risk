@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 CONFIG=${1:-configs/exp_baseline.yaml}
-python -m yourproj.preprocess --config $CONFIG
-python -m yourproj.features --config $CONFIG
-python -m yourproj.train --config $CONFIG
-python -m yourproj.eval --config $CONFIG
+python -m hcr.preprocess --config $CONFIG
+python -m hcr.features --config $CONFIG
+python -m hcr.train --config $CONFIG
+python -m hcr.eval --config $CONFIG
 echo "Done."

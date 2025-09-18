@@ -5,9 +5,9 @@ from pathlib import Path
 
 NB = Path(__file__).resolve().parents[1] / "notebooks" / "main.ipynb"
 
-TITLE = "Project Template: End-to-End AI/ML Pipeline"
+TITLE = "Hotel Cancellation Risk (HCR): Leak-Aware Prediction at Booking Time"
 SUBTITLE = (
-    "A reusable notebook scaffold for DS projects — ingestion, preprocessing, EDA, modeling, training, evaluation"
+    "Binary classification project to predict, at booking time, the probability that a hotel reservation will be canceled."
 )
 
 
