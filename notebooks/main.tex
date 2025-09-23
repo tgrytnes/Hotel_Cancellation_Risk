@@ -69,6 +69,46 @@
 \fi
 \makeatother
 
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{241,243,245}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.40,0.45,0.13}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.07,0.07,0.07}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
 
 \usepackage{longtable,booktabs,array}
 \usepackage{calc} % for calculating minipage widths
@@ -97,6 +137,39 @@
 \makeatother
 
 
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
 
 
@@ -130,6 +203,7 @@
     colback=codebg,%
     colframe=codebg,%
     borderline west={3pt}{0pt}{sectionblue},%
+    fontupper=\small\ttfamily,% reduce font size and force monospace for code
     boxrule=0pt,%
     arc=0pt,%
     boxsep=5pt,%
@@ -190,7 +264,7 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
 \hypersetup{
-  pdftitle={Project Template: End-to-End AI/ML Pipeline},
+  pdftitle={Hotel Cancellation Risk (HCR)},
   colorlinks=true,
   linkcolor={blue},
   filecolor={Maroon},
@@ -199,15 +273,14 @@
   pdfcreator={LaTeX via pandoc}}
 
 
-\title{Project Template: End-to-End AI/ML Pipeline}
+\title{Hotel Cancellation Risk (HCR)}
 \usepackage{etoolbox}
 \makeatletter
 \providecommand{\subtitle}[1]{% add subtitle to \maketitle
   \apptocmd{\@title}{\par {\large #1 \par}}{}{}
 }
 \makeatother
-\subtitle{A reusable notebook scaffold for DS projects --- ingestion,
-preprocessing, EDA, modeling, training, evaluation}
+\subtitle{Leak-Aware Prediction at Booking Time}
 \author{}
 \date{}
 \begin{document}
@@ -220,213 +293,1090 @@ preprocessing, EDA, modeling, training, evaluation}
 \tableofcontents
 }
 
-\section{Project Introduction}\label{project-introduction}
+\section{Project Introduction and Problem
+Description}\label{project-introduction-and-problem-description}
 
-\begin{itemize}
-\tightlist
-\item
-  Objectives \& Success Criteria: Define the problem, audience,
-  constraints, and what ``good'' looks like.
-\item
-  Metrics vs business KPIs; target thresholds; baseline to beat.
-\item
-  Assumptions \& Scope: What's in/out, data coverage period,
-  granularity, known limitations.
-\end{itemize}
+The goal of this project is to estimate---at the moment a hotel booking
+is created---the probability that the reservation will later be
+canceled.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+Learning approach: supervised learning --- specifically a binary
+classification task (predicting \texttt{is\_canceled} in \{0,1\}). We
+treat this as a discriminative, supervised classification problem where
+models learn P(cancel \textbar{} booking-time features) from labeled
+historical bookings.
 
-\begin{itemize}
-\tightlist
-\item
-  Goal: Describe the problem you are solving, who benefits, and how
-  success is measured.
-\item
-  Scope: Outline the boundaries (what is in/out) and key assumptions.
-\item
-  KPIs \& Metrics: Define primary metrics (e.g., accuracy, F1, AUC,
-  MAPE) and business KPIs.
-\item
-  Risks \& Constraints: Data availability/quality, latency/cost
-  constraints, privacy/compliance.
-\end{itemize}
+Algorithms (explicit categorization): - Regularized logistic regression
+--- a linear, parametric, probabilistic discriminative classifier. Fast,
+interpretable, and a good baseline; regularization (L1/L2) helps control
+overfitting and supports feature selection/interpretability. -
+Gradient-boosted trees (e.g., XGBoost/LightGBM/CatBoost) --- a
+tree-based ensemble (non-parametric) built by boosting decision trees.
+Captures nonlinearities and feature interactions, handles heterogeneous
+feature types and missing values well, and often yields strong
+predictive performance.
 
-For example: - \textbf{Goal.} Train a \textbf{compact CycleGAN} that
-translates \textbf{photos → Monet style}, then generate a Kaggle‑ready
-submission (\texttt{images.zip}, 7,000--10,000 images @ 256×256).
+Rationale: using both a simple linear probabilistic model (logistic
+regression) and a flexible ensemble (gradient-boosted trees) gives a
+balance between interpretability and predictive power. Both are
+supervised approaches; we will compare their ranking and calibration
+performance and apply probability calibration where needed so outputs
+are actionable for operations (overbooking rules, targeted outreach,
+deposit policies).
 
-\begin{itemize}
-\tightlist
-\item
-  \textbf{Deliverables}
+Evaluation mirrors real use with a chronological split (earlier bookings
+for training, later for validation, the most recent for testing). We
+will report PR-AUC (primary) and ROC-AUC (secondary) to assess ranking
+quality, and the Brier score with a reliability curve to assess
+probability calibration.
 
-  \begin{itemize}
-  \tightlist
-  \item
-    \textbf{Notebook (this file):} EDA → pipeline → model → training →
-    generation → zip → discussion.
-  \item
-    \textbf{GitHub repo:} add this notebook + README + helper scripts.
-  \item
-    \textbf{Kaggle leaderboard screenshot:} after submitting
-    \texttt{images.zip}.
-  \end{itemize}
-\item
-  \textbf{Why CycleGAN?} Unpaired image‑to‑image translation fits this
-  task: we have Monet paintings and photos but no aligned pairs. We keep
-  the implementation compact and trainable on a modest GPU.
-\end{itemize}
+Problem setup (concise): - Decision time: booking creation moment. -
+Target: is\_canceled in \{0,1\}; predict P(cancel \textbar{}
+booking-time features). - Evaluation sketch: time-aware split; metrics
+as above; post-training calibration.
 
 \section{Data Loading \& Initial
 Inspection}\label{data-loading-initial-inspection}
 
-Data Card (short): Sources, ownership, update cadence, schema summary,
-PII/sensitive fields, licensing.
+For this project we specifically need an individual-level hotel booking
+dataset that includes the final cancellation outcome and the fields
+known at booking time. The Hotel Booking Demand dataset satisfies these
+requirements.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+\subsection{Dataset}\label{dataset}
 
-Load data, take a sneek preview Tell about the data, for instance:
+We use the Hotel Booking Demand dataset, which contains reservation
+records for two Portuguese hotels---one city hotel (H2) and one resort
+hotel (H1)---covering arrivals from 1 July 2015 to 31 August 2017. In
+total there are 119,390 bookings described by 32 variables (e.g., lead
+time, market segment, distribution channel, deposit type, guest history,
+stay pattern); all personally identifying information was removed by the
+authors.
 
-To kick off our analysis, we'll load both the BBC News training set
-(with labels) and the test set (without labels), then merge them into
-one DataFrame. By combining all articles before any preprocessing, we
-guarantee that every document --- whether destined for model fitting or
-held out for final scoring --- passes through the exact same cleaning
-and feature-extraction pipeline. Because our core modeling (TF--IDF
-vectorization + NMF topic extraction) is entirely unsupervised, it never
-``looks at'' the test labels, so there's no risk of leaking label
-information. Instead, including test articles up front: • Ensures
-Consistency: Every token is lowercased, stemmed, and filtered for
-stop-words in the same way, avoiding any inadvertent vocabulary gaps
-between train and test. • Boosts Coverage: Rare words that appear only
-in test articles still become part of our TF--IDF vocabulary and topic
-bases, making our latent factors richer and more robust.
+The dataset originates from Antonio, Almeida, and Nunes (Antonio,
+Almeida, and Nunes (2019)), who exported and anonymized the data from
+the hotels' operational systems; it includes both realized and canceled
+bookings and was released specifically to support academic and applied
+research on hotel demand.
 
-After cleaning and factorization, we'll split back into train/test for
-hyperparameter tuning (using only train labels) and a final, held-out
-evaluation on the test labels.
+We will use the widely mirrored Kaggle copy curated by Jesse Mostipak
+(Mostipak (2020)), which repackages the original data as a single CSV
+for convenient loading.
 
-\section{Preprocess}\label{preprocess}
+This dataset is public, well-documented, and directly aligned with our
+goal of predicting cancellation risk at booking time: it contains both
+outcomes (canceled vs not canceled) and rich booking-time fields, spans
+multiple years and two hotel types, and is easy to reproduce from a
+single CSV.
 
-\subsection{Data Cleaning}\label{data-cleaning}
+Next we will download and unzip the dataset using Kaggle API.
 
-Cleaning: Standardize types, handle missing values, de-duplication,
-scaling.
+\subsection{Initial data inspection}\label{initial-data-inspection}
 
-What we did: 1. Removed duplicate articles to ensure each text sample is
-unique. 2. Dropped any rows with missing values to avoid errors
-downstream. 3. Applied a text-cleaning pipeline to each article: •
-Convert all characters to lowercase • Strip out HTML tags and URLs •
-Remove any non-alphabetic characters • Tokenize and filter out English
-stop-words • Stem each token using the Snowball stemmer
+Load the dataset and show a quick overview before we begin
+preprocessing: a preview of rows, the column types, and simple
+descriptive statistics. If the CSV is missing the code will raise a
+clear error so you can run the ingestion step first.
 
-Why we did it: Cleaning the raw text eliminates noise---such as
-punctuation, numbers, markup, and extremely common words---and reduces
-words to their root forms. This ensures that when we extract features
-(e.g.~via TF--IDF), the model trains on meaningful, standardized tokens
-rather than irrelevant or redundant strings.
+\begin{Shaded}
+\begin{Highlighting}[]
+\ImportTok{import}\NormalTok{ pandas }\ImportTok{as}\NormalTok{ pd}
+\ImportTok{from}\NormalTok{ pathlib }\ImportTok{import}\NormalTok{ Path}
+\ImportTok{from}\NormalTok{ IPython.display }\ImportTok{import}\NormalTok{ display, Markdown}
+\NormalTok{data\_path }\OperatorTok{=} \StringTok{"../data/raw/hotel\_bookings.csv"}
+\NormalTok{df }\OperatorTok{=}\NormalTok{ pd.read\_csv(data\_path)}
+\end{Highlighting}
+\end{Shaded}
 
-\section{Feature Engineering}\label{feature-engineering}
+df.info() gives the following information:
 
-Transformations: Windowing, aggregations, joins, label construction.
-Feature Catalog: Keep a short list of features with rationale and
-leakage checks.
+\textbf{Rows:} 119,390\\
+\textbf{Columns:} 32
 
-\subsection{Align + Label}\label{align-label}
-
-Aligning price and earnings data, then creating labels for model
-training
-
-\begin{longtable}[]{@{}lllllllllll@{}}
+\begin{longtable}[]{@{}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0519}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.4286}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1299}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1299}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1169}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1429}}@{}}
 \toprule\noalign{}
-& ticker & announce\_datetime & bmo\_amc & eps\_actual & eps\_estimate &
-t0\_date & close\_t0 & close\_t1 & y\_d1 & surprise \\
+\begin{minipage}[b]{\linewidth}\raggedleft
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Column
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+dtype
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Non-null
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Missing
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Missing \%
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-0 & AAA & 2025-01-01 09:00:00 & BMO & 1.2 & 1.0 & 2025-01-01 & 10 & 11.0
-& 1 & 0.2 \\
-1 & AAA & 2025-01-03 09:00:00 & BMO & 0.9 & 1.0 & 2025-01-03 & 12 & 11.0
-& 0 & -0.1 \\
-2 & AAA & 2025-01-06 09:00:00 & BMO & 1.1 & 1.0 & 2025-01-06 & 11 & 13.0
-& 1 & 0.1 \\
+0 & hotel & object & 119,390 & 0 & 0.00\% \\
+1 & is\_canceled & int64 & 119,390 & 0 & 0.00\% \\
+2 & lead\_time & int64 & 119,390 & 0 & 0.00\% \\
+3 & arrival\_date\_year & int64 & 119,390 & 0 & 0.00\% \\
+4 & arrival\_date\_month & object & 119,390 & 0 & 0.00\% \\
+5 & arrival\_date\_week\_number & int64 & 119,390 & 0 & 0.00\% \\
+6 & arrival\_date\_day\_of\_month & int64 & 119,390 & 0 & 0.00\% \\
+7 & stays\_in\_weekend\_nights & int64 & 119,390 & 0 & 0.00\% \\
+8 & stays\_in\_week\_nights & int64 & 119,390 & 0 & 0.00\% \\
+9 & adults & int64 & 119,390 & 0 & 0.00\% \\
+10 & children & float64 & 119,386 & 4 & 0.00\% \\
+11 & babies & int64 & 119,390 & 0 & 0.00\% \\
+12 & meal & object & 119,390 & 0 & 0.00\% \\
+13 & country & object & 118,902 & 488 & 0.41\% \\
+14 & market\_segment & object & 119,390 & 0 & 0.00\% \\
+15 & distribution\_channel & object & 119,390 & 0 & 0.00\% \\
+16 & is\_repeated\_guest & int64 & 119,390 & 0 & 0.00\% \\
+17 & previous\_cancellations & int64 & 119,390 & 0 & 0.00\% \\
+18 & previous\_bookings\_not\_canceled & int64 & 119,390 & 0 & 0.00\% \\
+19 & reserved\_room\_type & object & 119,390 & 0 & 0.00\% \\
+20 & assigned\_room\_type & object & 119,390 & 0 & 0.00\% \\
+21 & booking\_changes & int64 & 119,390 & 0 & 0.00\% \\
+22 & deposit\_type & object & 119,390 & 0 & 0.00\% \\
+23 & agent & float64 & 103,050 & 16,340 & 13.69\% \\
+24 & company & float64 & 6,797 & 112,593 & 94.31\% \\
+25 & days\_in\_waiting\_list & int64 & 119,390 & 0 & 0.00\% \\
+26 & customer\_type & object & 119,390 & 0 & 0.00\% \\
+27 & adr & float64 & 119,390 & 0 & 0.00\% \\
+28 & required\_car\_parking\_spaces & int64 & 119,390 & 0 & 0.00\% \\
+29 & total\_of\_special\_requests & int64 & 119,390 & 0 & 0.00\% \\
+30 & reservation\_status & object & 119,390 & 0 & 0.00\% \\
+31 & reservation\_status\_date & object & 119,390 & 0 & 0.00\% \\
 \end{longtable}
 
-\begin{Highlighting}
-\textcolor{black}{: }
-\textcolor{black}{}\textcolor{QuartoInternalColor1}{notebook controller is DISPOSED. }
-\textcolor{QuartoInternalColor1}{}\textcolor{QuartoInternalColor1}{View Jupyter <a href='command:jupyter.viewOutput'>log</a> for further details.}
-\end{Highlighting}
+Dataset summary (tabulated):
 
-\begin{Highlighting}
-\textcolor{black}{: }
-\textcolor{black}{}\textcolor{QuartoInternalColor1}{notebook controller is DISPOSED. }
-\textcolor{QuartoInternalColor1}{}\textcolor{QuartoInternalColor1}{View Jupyter <a href='command:jupyter.viewOutput'>log</a> for further details.}
+\begin{itemize}
+\tightlist
+\item
+  Number of samples (rows): \textbf{119,390}
+\item
+  Number of features (columns): \textbf{32}
+\item
+  CSV file size on disk: \textbf{\textasciitilde16.9 MB}
+\item
+  Data provenance: single-table CSV (Kaggle mirror of the Hotel Booking
+  Demand dataset).
+\end{itemize}
+
+Data types (summary): - int64: 16 - float64: 4 - object (string /
+categorical): 12
+
+Missing-value highlights (important columns):
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{agent}: 16,340 missing (\(\approx 13.69\%\)) --- mostly NA
+  where bookings have no agent ID
+\item
+  \texttt{company}: 112,593 missing (\(\approx 94.31\%\)) --- most
+  bookings are not associated with a company
+\item
+  \texttt{country}: 488 missing (\(\approx 0.41\%\))
+\end{itemize}
+
+Key features (short descriptions):
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{is\_canceled} (target): 0/1 indicator whether the booking was
+  canceled --- the supervised label for binary classification.
+\item
+  \texttt{lead\_time}: number of days between booking and arrival ---
+  often predictive of cancellation behaviour.
+\item
+  \texttt{previous\_cancellations}: historical number of cancellations
+  by the same guest --- a strong signal of cancellation propensity.
+\item
+  \texttt{previous\_bookings\_not\_canceled}: prior non-canceled
+  bookings for the guest.
+\item
+  \texttt{is\_repeated\_guest}: binary indicator if the guest is a
+  repeat customer.
+\item
+  \texttt{adr}: average daily rate --- price information associated with
+  the booking.
+\item
+  \texttt{hotel}: hotel type (city vs resort) --- two hotel sites in
+  dataset.
+\item
+  \texttt{reservation\_status} / \texttt{reservation\_status\_date}:
+  final reservation outcome and date (stored as text; parse to dates for
+  temporal checks).
+\item
+  \texttt{booking\_changes}: number of changes made to the booking
+  (edits) --- may signal instability.
+\item
+  \texttt{agent}, \texttt{company}: identifiers for booking agent or
+  company (sparse/missing); handle carefully or create a `missing'
+  category.
+\item
+  \texttt{arrival\_date\_*} (year/month/day): arrival date broken into
+  components --- used for chronological splitting and seasonality
+  features.
+\item
+  \texttt{total\_of\_special\_requests}, \texttt{customer\_type},
+  \texttt{deposit\_type}, \texttt{market\_segment},
+  \texttt{distribution\_channel}: operational/categorical fields useful
+  for segmentation and modelling.
+\end{itemize}
+
+Notes on shape and sources: This dataset is a single, flattened table
+(one CSV) assembled from operational exports by the dataset authors and
+mirrored on Kaggle; it is not a multi-table relational dataset.
+
+Note: children, agent, and company are float64 because of missing
+values; reservation\_status\_date is stored as text and can be parsed to
+a proper date type.
+
+\section{Preprocess and Data
+Cleaning}\label{preprocess-and-data-cleaning}
+
+\subsection{Missing Value Treatment}\label{missing-value-treatment}
+
+\textbf{Step}: Handle missing values in identified columns
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{children}: 4 missing (0.00\%) → Fill with 0
+\item
+  \texttt{country}: 488 missing (0.41\%) → needs a closer analysis
+\item
+  \texttt{agent}: 16,340 missing (13.69\%) → Fill with 0
+\item
+  \texttt{company}: 112,593 missing (94.31\%) → Fill with 0
+\end{itemize}
+
+\textbf{Why}: Missing values prevent model training.
+
+\begin{itemize}
+\tightlist
+\item
+  For \texttt{children}, 0 is logical default.
+\item
+  For \texttt{agent} and \texttt{company}, missingness indicates direct
+  bookings (no intermediary), so 0 represents this business reality.
+\item
+  High missingness in \texttt{company} (94\%) suggests most bookings
+  aren't corporate.
+\item
+  Country needs a closer look, which we will do in the next subsection:
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df\_cleaned }\OperatorTok{=}\NormalTok{ df.copy()}
+\NormalTok{df\_cleaned[}\StringTok{\textquotesingle{}children\textquotesingle{}}\NormalTok{] }\OperatorTok{=}\NormalTok{ df\_cleaned[}\StringTok{\textquotesingle{}children\textquotesingle{}}\NormalTok{].fillna(}\DecValTok{0}\NormalTok{)}
+\NormalTok{df\_cleaned[}\StringTok{\textquotesingle{}agent\textquotesingle{}}\NormalTok{] }\OperatorTok{=}\NormalTok{ df\_cleaned[}\StringTok{\textquotesingle{}agent\textquotesingle{}}\NormalTok{].fillna(}\DecValTok{0}\NormalTok{)}
+\NormalTok{df\_cleaned[}\StringTok{\textquotesingle{}company\textquotesingle{}}\NormalTok{] }\OperatorTok{=}\NormalTok{ df\_cleaned[}\StringTok{\textquotesingle{}company\textquotesingle{}}\NormalTok{].fillna(}\DecValTok{0}\NormalTok{)}
 \end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Missing Values - Country
+Analysis}\label{missing-values---country-analysis}
+
+After doing some investigation, missing country bookings show
+dramatically different patterns:
+
+\begin{itemize}
+\tightlist
+\item
+  13.7\% cancellation rate vs 37.1\% overall
+\item
+  95\% resort hotels vs 34\% overall\\
+\item
+  38\% corporate distribution vs 6\% overall
+\item
+  32-day lead time vs 104-day overall
+\item
+  Likely represents corporate/business segment with distinct booking
+  behavior
+\end{itemize}
+
+\textbf{Why}: Missing country correlates with a low-risk, corporate
+booking segment. The `Unknown' category captures valuable predictive
+signal about booking certainty and should be preserved for modeling.
+
+\textbf{Step}: Retain missing country values as `Unknown' category
+
+\begin{itemize}
+\tightlist
+\item
+  Fill 488 missing \texttt{country} values with `Unknown'
+\item
+  Treat as legitimate business segment for modeling
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df\_cleaned[}\StringTok{\textquotesingle{}country\textquotesingle{}}\NormalTok{] }\OperatorTok{=}\NormalTok{ df\_cleaned[}\StringTok{\textquotesingle{}country\textquotesingle{}}\NormalTok{].fillna(}\StringTok{\textquotesingle{}Unknown\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Data Leakage Removal}\label{data-leakage-removal}
+
+\textbf{Step}: Remove features that reveal the target or aren't
+available at booking time
+
+\begin{itemize}
+\tightlist
+\item
+  Remove \texttt{reservation\_status} (directly indicates cancellation)
+\item
+  Remove \texttt{reservation\_status\_date} (cancellation/checkout date)
+\item
+  Remove \texttt{deposit\_type} (During EDA, we discovered that
+  deposit\_type contains post-outcome information. The ``Non Refund''
+  category shows 99.4\% cancellation rate (14,494 of 14,587 bookings), )
+\end{itemize}
+
+\textbf{Why}: These features create data leakage - they contain
+information that would only be known after the prediction needs to be
+made. Using them would artificially inflate model performance and make
+it useless in production.
+
+We also remove 7 bookings with `Undefined' market segments or
+distribution channels - these represent early data collection errors
+from 2015 rather than meaningful unknown categories. This removal
+affects less than 0.006\% of the dataset while eliminating anomalous
+patterns (also discovered during EDA)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df\_cleaned }\OperatorTok{=}\NormalTok{ df\_cleaned.drop(columns}\OperatorTok{=}\NormalTok{[}\StringTok{\textquotesingle{}reservation\_status\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}reservation\_status\_date\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}deposit\_type\textquotesingle{}}\NormalTok{])}
+
+\CommentTok{\# Remove undefined entries}
+\NormalTok{df\_cleaned }\OperatorTok{=}\NormalTok{ df\_cleaned[}
+    \OperatorTok{\textasciitilde{}}\NormalTok{df\_cleaned[}\StringTok{\textquotesingle{}market\_segment\textquotesingle{}}\NormalTok{].isin([}\StringTok{\textquotesingle{}Undefined\textquotesingle{}}\NormalTok{]) }\OperatorTok{\&} 
+    \OperatorTok{\textasciitilde{}}\NormalTok{df\_cleaned[}\StringTok{\textquotesingle{}distribution\_channel\textquotesingle{}}\NormalTok{].isin([}\StringTok{\textquotesingle{}Undefined\textquotesingle{}}\NormalTok{])}
+\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Outlier Detection and
+Treatment}\label{outlier-detection-and-treatment}
+
+\textbf{Step}: Clean ADR (Average Daily Rate) outliers using
+business-informed approach
+
+Average Daily Rate shows extreme values requiring strategic treatment
+rather than blanket removal:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ImportTok{import}\NormalTok{ numpy }\ImportTok{as}\NormalTok{ np}
+
+\NormalTok{adr }\OperatorTok{=}\NormalTok{ df[}\StringTok{\textquotesingle{}adr\textquotesingle{}}\NormalTok{]}
+\NormalTok{q1, q3 }\OperatorTok{=}\NormalTok{ adr.quantile([}\FloatTok{0.25}\NormalTok{, }\FloatTok{0.75}\NormalTok{])}
+
+\BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"ADR Stats (n=}\SpecialCharTok{\{}\BuiltInTok{len}\NormalTok{(adr)}\SpecialCharTok{:,\}}\SpecialStringTok{)"}\NormalTok{)}
+\BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"Range: $}\SpecialCharTok{\{}\NormalTok{adr}\SpecialCharTok{.}\BuiltInTok{min}\NormalTok{()}\SpecialCharTok{:.2f\}}\SpecialStringTok{ {-} $}\SpecialCharTok{\{}\NormalTok{adr}\SpecialCharTok{.}\BuiltInTok{max}\NormalTok{()}\SpecialCharTok{:,.0f\}}\SpecialStringTok{"}\NormalTok{)}
+\BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"Mean: $}\SpecialCharTok{\{}\NormalTok{adr}\SpecialCharTok{.}\NormalTok{mean()}\SpecialCharTok{:.2f\}}\SpecialStringTok{ | Median: $}\SpecialCharTok{\{}\NormalTok{adr}\SpecialCharTok{.}\NormalTok{median()}\SpecialCharTok{:.2f\}}\SpecialStringTok{"}\NormalTok{)}
+\BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"1\%: $}\SpecialCharTok{\{}\NormalTok{adr}\SpecialCharTok{.}\NormalTok{quantile(}\FloatTok{0.01}\NormalTok{)}\SpecialCharTok{:.2f\}}\SpecialStringTok{ | 99,99\%: $}\SpecialCharTok{\{}\NormalTok{adr}\SpecialCharTok{.}\NormalTok{quantile(}\FloatTok{0.9999}\NormalTok{)}\SpecialCharTok{:.2f\}}\SpecialStringTok{"}\NormalTok{)}
+\BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"Issues: Neg:}\SpecialCharTok{\{}\NormalTok{(adr}\OperatorTok{\textless{}}\DecValTok{0}\NormalTok{)}\SpecialCharTok{.}\BuiltInTok{sum}\NormalTok{()}\SpecialCharTok{\}}\SpecialStringTok{ Zero:}\SpecialCharTok{\{}\NormalTok{(adr}\OperatorTok{==}\DecValTok{0}\NormalTok{)}\SpecialCharTok{.}\BuiltInTok{sum}\NormalTok{()}\SpecialCharTok{\}}\SpecialStringTok{ \textgreater{}$500:}\SpecialCharTok{\{}\NormalTok{(adr}\OperatorTok{\textgreater{}}\DecValTok{500}\NormalTok{)}\SpecialCharTok{.}\BuiltInTok{sum}\NormalTok{()}\SpecialCharTok{\}}\SpecialStringTok{"}\NormalTok{)}
+\NormalTok{outliers }\OperatorTok{=}\NormalTok{ (adr }\OperatorTok{\textgreater{}}\NormalTok{ q3 }\OperatorTok{+} \FloatTok{1.5}\OperatorTok{*}\NormalTok{(q3}\OperatorTok{{-}}\NormalTok{q1)).}\BuiltInTok{sum}\NormalTok{()}
+\BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"IQR outliers: }\SpecialCharTok{\{}\NormalTok{outliers}\SpecialCharTok{:,\}}\SpecialStringTok{"}\NormalTok{)}
+\ControlFlowTok{if}\NormalTok{ (adr }\OperatorTok{\textgreater{}} \DecValTok{1000}\NormalTok{).}\BuiltInTok{sum}\NormalTok{() }\OperatorTok{\textless{}=} \DecValTok{5}\NormalTok{: }
+    \BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"\textgreater{}$1K: }\SpecialCharTok{\{}\BuiltInTok{list}\NormalTok{(adr[adr}\OperatorTok{\textgreater{}}\DecValTok{1000}\NormalTok{])}\SpecialCharTok{\}}\SpecialStringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+ADR Stats (n=119,390)
+Range: $-6.38 - $5,400
+Mean: $101.83 | Median: $94.58
+1%: $0.00 | 99,99%: $388.00
+Issues: Neg:1 Zero:1959 >$500:3
+IQR outliers: 3,793
+>$1K: [5400.0]
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Remove 1 negative ADR} (-\$6.38) - impossible hotel rate
+\item
+  \textbf{Remove 715 incomplete bookings} (zero ADR + zero nights) -
+  data entry errors\\
+\item
+  \textbf{Preserve 1,244 complementary stays} (zero ADR + actual nights)
+  - legitimate complimentary bookings
+\item
+  \textbf{Cap extreme outlier} (\(\approx 500\,€\) at 99,999th
+  percentile) - likely data entry error
+\end{itemize}
+
+\textbf{Why}: Investigation revealed complementary stays represent a
+distinct low-risk segment with 14.3\% cancellation rate versus 37.1\%
+overall. Rather than removing all zero-price bookings, we preserve this
+valuable business segment while eliminating only clearly invalid
+records. This approach maintains predictive signal while ensuring data
+quality.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df\_cleaned }\OperatorTok{=}\NormalTok{ df\_cleaned[df\_cleaned[}\StringTok{\textquotesingle{}adr\textquotesingle{}}\NormalTok{] }\OperatorTok{\textgreater{}=} \DecValTok{0}\NormalTok{]  }\CommentTok{\# Remove negative ADR}
+\NormalTok{cap\_value }\OperatorTok{=}\NormalTok{ df[}\StringTok{\textquotesingle{}adr\textquotesingle{}}\NormalTok{].quantile(}\FloatTok{0.9999}\NormalTok{)}
+\NormalTok{df\_cleaned[}\StringTok{\textquotesingle{}adr\textquotesingle{}}\NormalTok{] }\OperatorTok{=}\NormalTok{ df\_cleaned[}\StringTok{\textquotesingle{}adr\textquotesingle{}}\NormalTok{].clip(upper}\OperatorTok{=}\NormalTok{cap\_value)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ImportTok{import}\NormalTok{ matplotlib.pyplot }\ImportTok{as}\NormalTok{ plt}
+\CommentTok{\# Histogram with linear x{-}axis and log y{-}axis}
+\NormalTok{fig, ax }\OperatorTok{=}\NormalTok{ plt.subplots(figsize}\OperatorTok{=}\NormalTok{(}\DecValTok{12}\NormalTok{, }\DecValTok{6}\NormalTok{))}
+\NormalTok{ax.hist(df\_cleaned[}\StringTok{\textquotesingle{}adr\textquotesingle{}}\NormalTok{], bins}\OperatorTok{=}\DecValTok{200}\NormalTok{, edgecolor}\OperatorTok{=}\StringTok{\textquotesingle{}black\textquotesingle{}}\NormalTok{, alpha}\OperatorTok{=}\FloatTok{0.7}\NormalTok{, color}\OperatorTok{=}\StringTok{\textquotesingle{}lightblue\textquotesingle{}}\NormalTok{)}
+\NormalTok{ax.set\_yscale(}\StringTok{\textquotesingle{}log\textquotesingle{}}\NormalTok{)  }\CommentTok{\# Log scale on y{-}axis only}
+\NormalTok{ax.set\_title(}\StringTok{\textquotesingle{}ADR Distribution {-} ALL DATA (Log Y{-}axis)\textquotesingle{}}\NormalTok{)}
+\NormalTok{ax.set\_xlabel(}\StringTok{\textquotesingle{}Average Daily Rate ($)\textquotesingle{}}\NormalTok{)}
+\NormalTok{ax.set\_ylabel(}\StringTok{\textquotesingle{}Frequency (Log Scale)\textquotesingle{}}\NormalTok{)}
+\NormalTok{ax.grid(}\VariableTok{True}\NormalTok{, alpha}\OperatorTok{=}\FloatTok{0.3}\NormalTok{)}
+
+\CommentTok{\# Add title with key stats}
+\NormalTok{ax.set\_title(}\SpecialStringTok{f\textquotesingle{}AFTER CLEANING {-} ADR Distribution (Log Y{-}axis)}\CharTok{\textbackslash{}n}\SpecialStringTok{\textquotesingle{}}\NormalTok{)}
+
+\NormalTok{plt.tight\_layout()}
+\NormalTok{plt.show()}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{main_files/figure-pdf/cell-8-output-1.png}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df\_cleaned }\OperatorTok{=}\NormalTok{ df\_cleaned.drop(columns}\OperatorTok{=}\NormalTok{[}\StringTok{\textquotesingle{}arrival\_date\_year\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}arrival\_date\_month\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}arrival\_date\_day\_of\_month\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}arrival\_date\_week\_number\textquotesingle{}}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+We dropped temporal features (year, month, day) since these are
+arbitrary numeric values (31, 23, 11, etc.) without meaningful
+predictive power for our ML model. While we could have feature
+engineered seasonal variables (e.g., winter, summer) or other time-based
+patterns, our dataset only spans 2 years, which is insufficient to
+reliably capture or validate such temporal relationships.
 
 \section{Exploratory Data Analysis}\label{exploratory-data-analysis}
 
-Use this section to explore distributions, correlations, seasonality,
-and sanity checks. Capture insights and hypotheses to guide modeling.
+After cleaning our data, we now conduct a thorough exploratory analysis
+to understand the relationships between features and cancellation
+behavior. This analysis will guide our modeling decisions and reveal
+actionable business insights.
 
-\begin{longtable}[]{@{}llllllll@{}}
+\subsection{Target Variable
+Distribution}\label{target-variable-distribution}
+
+\textbf{Purpose}: Understanding the base rate of cancellations is
+crucial for setting performance benchmarks and identifying class
+imbalance issues that may affect model training.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\BuiltInTok{print}\NormalTok{(df\_cleaned[}\StringTok{\textquotesingle{}is\_canceled\textquotesingle{}}\NormalTok{].value\_counts(normalize}\OperatorTok{=}\VariableTok{True}\NormalTok{).}\BuiltInTok{round}\NormalTok{(}\DecValTok{3}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+is_canceled
+0    0.63
+1    0.37
+Name: proportion, dtype: float64
+\end{verbatim}
+
+\textbf{Finding}: With 37\% of bookings canceled, we have a moderately
+imbalanced dataset. This is sufficient minority class representation for
+standard algorithms, though we may benefit from stratified sampling
+during model validation.
+
+\subsection{Correlation Analysis}\label{correlation-analysis}
+
+\textbf{Purpose:} Correlation analysis helps identify linear
+relationships between numerical features and our target variable. Strong
+correlations suggest predictive power, while correlations between
+features may indicate multicollinearity issues for linear models.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ImportTok{import}\NormalTok{ seaborn }\ImportTok{as}\NormalTok{ sns}
+\NormalTok{numerical\_cols }\OperatorTok{=}\NormalTok{ df\_cleaned.select\_dtypes(include}\OperatorTok{=}\NormalTok{[}\StringTok{\textquotesingle{}int64\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}float64\textquotesingle{}}\NormalTok{]).columns}
+\NormalTok{correlation\_matrix }\OperatorTok{=}\NormalTok{ df\_cleaned[numerical\_cols].corr()}
+
+\NormalTok{target\_corr }\OperatorTok{=}\NormalTok{ correlation\_matrix[}\StringTok{\textquotesingle{}is\_canceled\textquotesingle{}}\NormalTok{].sort\_values(ascending}\OperatorTok{=}\VariableTok{False}\NormalTok{)}
+\NormalTok{plt.figure(figsize}\OperatorTok{=}\NormalTok{(}\DecValTok{8}\NormalTok{, }\DecValTok{10}\NormalTok{))}
+\NormalTok{target\_corr[}\DecValTok{1}\NormalTok{:].plot(kind}\OperatorTok{=}\StringTok{\textquotesingle{}barh\textquotesingle{}}\NormalTok{)}
+\NormalTok{plt.title(}\StringTok{\textquotesingle{}Feature Correlations with Cancellation\textquotesingle{}}\NormalTok{)}
+\NormalTok{plt.xlabel(}\StringTok{\textquotesingle{}Correlation Coefficient\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Text(0.5, 0, 'Correlation Coefficient')
+\end{verbatim}
+
+\pandocbounded{\includegraphics[keepaspectratio]{main_files/figure-pdf/cell-11-output-2.png}}
+
+\subsubsection{Correlation Analysis --- Top
+signals}\label{correlation-analysis-top-signals}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{lead\_time} \textbf{(+0.29)} --- Longer lead times → higher
+  cancellation risk (more time for plans to change).
+\item
+  \texttt{total\_special\_requests} \textbf{(−0.23)} --- Guests
+  investing effort/requests are less likely to cancel.
+\item
+  \texttt{required\_car\_parking\_spaces} \textbf{(−0.20)} --- Planning
+  to arrive by car signals commitment.
+\item
+  \texttt{previous\_cancellations} \textbf{(+0.11)} --- Past behavior
+  predicts future behavior.
+\end{itemize}
+
+\begin{quote}
+Note: Correlation is not equal causation. Effects may sharpen or shift
+once we control for other variables.
+\end{quote}
+
+\subsection{Cancellation Pattern
+Analysis}\label{cancellation-pattern-analysis}
+
+\textbf{Purpose}: Different customer segments and booking types exhibit
+distinct cancellation behaviors. Understanding these patterns helps
+hotels tailor policies (deposits, confirmations, overbooking) to
+specific segments. We will also create lead \_time categories since the
+correlation analysis showed that lead\_time has a high cancellation
+risk.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Create a lead time category feature first}
+\NormalTok{df\_cleaned[}\StringTok{\textquotesingle{}lead\_time\_category\textquotesingle{}}\NormalTok{] }\OperatorTok{=}\NormalTok{ pd.cut(df\_cleaned[}\StringTok{\textquotesingle{}lead\_time\textquotesingle{}}\NormalTok{], }
+\NormalTok{                                           bins}\OperatorTok{=}\NormalTok{[}\DecValTok{0}\NormalTok{, }\DecValTok{7}\NormalTok{, }\DecValTok{30}\NormalTok{, }\DecValTok{90}\NormalTok{, }\DecValTok{400}\NormalTok{], }
+\NormalTok{                                           labels}\OperatorTok{=}\NormalTok{[}\StringTok{\textquotesingle{}Last Minute\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}Short\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}Medium\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}Long\textquotesingle{}}\NormalTok{])}
+
+\NormalTok{categorical\_features }\OperatorTok{=}\NormalTok{ \{}
+    \StringTok{\textquotesingle{}hotel\textquotesingle{}}\NormalTok{: }\StringTok{\textquotesingle{}Hotel Type\textquotesingle{}}\NormalTok{,}
+    \StringTok{\textquotesingle{}customer\_type\textquotesingle{}}\NormalTok{: }\StringTok{\textquotesingle{}Customer Type\textquotesingle{}}\NormalTok{,}
+    \StringTok{\textquotesingle{}market\_segment\textquotesingle{}}\NormalTok{: }\StringTok{\textquotesingle{}Market Segment\textquotesingle{}}\NormalTok{,}
+    \StringTok{\textquotesingle{}distribution\_channel\textquotesingle{}}\NormalTok{: }\StringTok{\textquotesingle{}Distribution Channel\textquotesingle{}}\NormalTok{,}
+    \StringTok{\textquotesingle{}is\_repeated\_guest\textquotesingle{}}\NormalTok{: }\StringTok{\textquotesingle{}Repeat Guest Status\textquotesingle{}}\NormalTok{,}
+    \StringTok{\textquotesingle{}lead\_time\_category\textquotesingle{}}\NormalTok{: }\StringTok{\textquotesingle{}Booking Lead Time\textquotesingle{}}  \CommentTok{\# Add this}
+\NormalTok{\}}
+
+\NormalTok{fig, axes }\OperatorTok{=}\NormalTok{ plt.subplots(}\DecValTok{2}\NormalTok{, }\DecValTok{3}\NormalTok{, figsize}\OperatorTok{=}\NormalTok{(}\DecValTok{15}\NormalTok{, }\DecValTok{10}\NormalTok{))}
+\NormalTok{axes }\OperatorTok{=}\NormalTok{ axes.ravel()}
+
+\ControlFlowTok{for}\NormalTok{ idx, (feature, title) }\KeywordTok{in} \BuiltInTok{enumerate}\NormalTok{(categorical\_features.items()):}
+    \CommentTok{\# Calculate cancellation rate by category}
+\NormalTok{    cancel\_rate }\OperatorTok{=}\NormalTok{ df\_cleaned.groupby(feature)[}\StringTok{\textquotesingle{}is\_canceled\textquotesingle{}}\NormalTok{].agg([}\StringTok{\textquotesingle{}mean\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}count\textquotesingle{}}\NormalTok{])}
+\NormalTok{    cancel\_rate }\OperatorTok{=}\NormalTok{ cancel\_rate.sort\_values(}\StringTok{\textquotesingle{}mean\textquotesingle{}}\NormalTok{, ascending}\OperatorTok{=}\VariableTok{False}\NormalTok{)}
+    
+    \CommentTok{\# Plot}
+\NormalTok{    cancel\_rate[}\StringTok{\textquotesingle{}mean\textquotesingle{}}\NormalTok{].plot(kind}\OperatorTok{=}\StringTok{\textquotesingle{}bar\textquotesingle{}}\NormalTok{, ax}\OperatorTok{=}\NormalTok{axes[idx], color}\OperatorTok{=}\StringTok{\textquotesingle{}steelblue\textquotesingle{}}\NormalTok{)}
+\NormalTok{    axes[idx].set\_title(}\SpecialStringTok{f\textquotesingle{}Cancellation Rate by }\SpecialCharTok{\{}\NormalTok{title}\SpecialCharTok{\}}\SpecialStringTok{\textquotesingle{}}\NormalTok{)}
+\NormalTok{    axes[idx].set\_ylabel(}\StringTok{\textquotesingle{}Cancellation Rate\textquotesingle{}}\NormalTok{)}
+\NormalTok{    axes[idx].axhline(y}\OperatorTok{=}\FloatTok{0.37}\NormalTok{, color}\OperatorTok{=}\StringTok{\textquotesingle{}red\textquotesingle{}}\NormalTok{, linestyle}\OperatorTok{=}\StringTok{\textquotesingle{}{-}{-}\textquotesingle{}}\NormalTok{, alpha}\OperatorTok{=}\FloatTok{0.5}\NormalTok{, label}\OperatorTok{=}\StringTok{\textquotesingle{}Overall Rate\textquotesingle{}}\NormalTok{)}
+\NormalTok{    axes[idx].legend()}
+    
+    \CommentTok{\# Add sample size as text}
+    \ControlFlowTok{for}\NormalTok{ i, (index, row) }\KeywordTok{in} \BuiltInTok{enumerate}\NormalTok{(cancel\_rate.iterrows()):}
+\NormalTok{        axes[idx].text(i, row[}\StringTok{\textquotesingle{}mean\textquotesingle{}}\NormalTok{] }\OperatorTok{+} \FloatTok{0.01}\NormalTok{, }\SpecialStringTok{f\textquotesingle{}n=}\SpecialCharTok{\{}\NormalTok{row[}\StringTok{"count"}\NormalTok{]}\SpecialCharTok{:,\}}\SpecialStringTok{\textquotesingle{}}\NormalTok{, }
+\NormalTok{                      ha}\OperatorTok{=}\StringTok{\textquotesingle{}center\textquotesingle{}}\NormalTok{, va}\OperatorTok{=}\StringTok{\textquotesingle{}bottom\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{8}\NormalTok{)}
+
+\NormalTok{plt.suptitle(}\StringTok{\textquotesingle{}Cancellation Patterns Across Customer Segments\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, y}\OperatorTok{=}\FloatTok{1.02}\NormalTok{)}
+\NormalTok{plt.tight\_layout()}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{main_files/figure-pdf/cell-12-output-1.png}}
+
+\subsection{Categorical Risk \& Actions --- Refined, Decision-Ready
+Summary}\label{categorical-risk-actions-refined-decision-ready-summary}
+
+\begin{quote}
+Evidence basis: your Hotel Booking Demand dataset analysis. No external
+sources used; figures are dataset-specific (general in nature).
+\end{quote}
+
+\subsubsection{Segment Risk Snapshot}\label{segment-risk-snapshot}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3000}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3000}}@{}}
 \toprule\noalign{}
-& ticker & date & open & high & low & close & volume \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Segment / Rule
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Observed cancel rate
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Interpretation
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-0 & AAA & 2025-01-01 & 1 & 1 & 1 & 10 & 100 \\
-1 & AAA & 2025-01-02 & 1 & 1 & 1 & 11 & 100 \\
-2 & AAA & 2025-01-03 & 1 & 1 & 1 & 12 & 100 \\
-3 & AAA & 2025-01-06 & 1 & 1 & 1 & 11 & 100 \\
-4 & AAA & 2025-01-07 & 1 & 1 & 1 & 13 & 100 \\
+market\_segment = \textbf{Groups} & \textbf{≈60\%} & Likely tour/agency
+groups with flexible terms → reserve loosely, cancel late. \\
+\textbf{Online TA / Transient-Party} & High (top cohort) & Price
+shopping; low switching costs. Consider prepay/NRF fences. \\
+\textbf{Lead time \textgreater{} 90 days} & \textbf{≈48\%} & Longer
+planning horizon → more room for plan changes. \\
+\textbf{City hotel} & \textbf{≈42\%} vs resort ≈28\% &
+Business/short-notice changes; different trip intent. \\
+\textbf{Direct} distribution & \textbf{≈16\%} & Higher intent, fewer
+intermediaries. \\
+\textbf{Repeat guests} (is\_repeated\_guest = 1) & \textbf{≈14\%} vs
+overall ≈37\% & Loyalty and familiarity reduce risk (≈2.6× lower). \\
+\textbf{Last-minute (\textless{} 7 days)} & \textbf{≈11\%} & Immediate
+travel → firm intent. \\
+customer\_type = \textbf{Group} & \textbf{≈10\%} & Corporate/contracted
+groups (not the same as market\_segment=Groups): committed blocks,
+penalties apply. \\
 \end{longtable}
 
-\begin{longtable}[]{@{}llllll@{}}
-\toprule\noalign{}
-& ticker & announce\_datetime & bmo\_amc & eps\_actual &
-eps\_estimate \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-0 & AAA & 2025-01-01 09:00:00 & BMO & 1.2 & 1.0 \\
-1 & AAA & 2025-01-03 09:00:00 & BMO & 0.9 & 1.0 \\
-2 & AAA & 2025-01-06 09:00:00 & BMO & 1.1 & 1.0 \\
-\end{longtable}
+⚠️ Disambiguation that fixes the ``Groups'' contradiction: -
+\textbf{market\_segment=Groups} (how the booking was acquired) → high
+cancellations. - \textbf{customer\_type=Group} (how the stay is
+organized/contracted) → low cancellations.
 
-\begin{Highlighting}
-\textcolor{black}{: }
-\textcolor{black}{}\textcolor{QuartoInternalColor1}{notebook controller is DISPOSED. }
-\textcolor{QuartoInternalColor1}{}\textcolor{QuartoInternalColor1}{View Jupyter <a href='command:jupyter.viewOutput'>log</a> for further details.}
+\subsubsection{Strategic Patterns (what the data is telling
+you)}\label{strategic-patterns-what-the-data-is-telling-you}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Distribution matters:} Direct ≪ TA/TO in cancellations.
+  Control more levers (pricing, policy) on direct.
+\item
+  \textbf{Lead-time tiers are clean and monotonic:}
+  \texttt{\textless{}7d\ ≈11\%\ →\ 7–30d\ ≈27\%\ →\ 30–90d\ ≈37\%\ →\ \textgreater{}90d\ ≈48\%}.
+\item
+  \textbf{Property type differs:} City vs Resort behave differently;
+  avoid one-size-fits-all policies.
+\end{itemize}
+
+\subsubsection{Business Actions (immediately
+testable)}\label{business-actions-immediately-testable}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Dynamic deposits by lead time (policy fences)}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{\textless{}7d}: low/no deposit; frictionless.\\
+  \item
+    \texttt{7–30d}: modest deposit or shorter free-cxl window.\\
+  \item
+    \texttt{30–90d}: stronger deposit; partial NRF options.\\
+  \item
+    \texttt{\textgreater{}90d}: highest deposit or staged prepayment;
+    stricter free-cxl cutoff.
+  \end{itemize}
+\item
+  \textbf{Loyalty emphasis}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    ``Stay credit'' accruals, member-only flexible rates.\\
+  \item
+    Proactive save-the-booking outreach when a repeat guest signals
+    change.
+  \end{itemize}
+\item
+  \textbf{Shift mix toward Direct}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Price parity + extra value (breakfast, late-out) only on direct.\\
+  \item
+    Cart-abandon emails/SMS; hold inventory windows for direct queries.
+  \end{itemize}
+\item
+  \textbf{Segment-aware overbooking}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Safer:} customer\_type=Group, Contract, Repeat.\\
+  \item
+    \textbf{Risky:} market\_segment=Groups, Online TA, Transient-Party,
+    Lead time \textgreater90d.\\
+  \item
+    Maintain \textbf{property-specific} protection levels (City
+    \textgreater{} Resort).
+  \end{itemize}
+\item
+  \textbf{Rate plan architecture}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Offer paired plans: \textbf{Flexible} (higher ADR) vs
+    \textbf{Semi-Flex/NRF} (discount) tuned by tier.\\
+  \item
+    Require deposit for Online TA long-lead; keep Flexible for Direct
+    short-lead.
+  \end{itemize}
+\end{enumerate}
+
+\subsubsection{Feature Engineering (to feed trees/GBMs
+neatly)}\label{feature-engineering-to-feed-treesgbms-neatly}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Lead time bins}:
+  \texttt{\textless{}7,\ 7–30,\ 30–90,\ \textgreater{}90} (ordinal
+  encoding).\\
+\item
+  \textbf{Channel \& segment buckets}: \{Direct, Corporate, TA/TO,
+  Online TA, Groups\}.\\
+\item
+  \textbf{Customer type}: \{Transient, Transient-Party, Contract,
+  Group\}.\\
+\item
+  \textbf{Loyalty flag}: \texttt{is\_repeated\_guest}.\\
+\item
+  \textbf{Commitment signals} (negatively correlated with cancellation
+  in your corr. pass):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{total\_special\_requests} (higher → safer),\\
+  \item
+    \texttt{required\_car\_parking\_spaces} (presence → safer).\\
+  \end{itemize}
+\item
+  \textbf{Behavioral history}: \texttt{previous\_cancellations} (count,
+  capped/winsorized).\\
+\item
+  \textbf{Deposit type}: \{No Deposit, Non-Refund, Refundable\}.\\
+\item
+  \textbf{Stay pattern}: weekend\_nights, week\_nights, total\_nights
+  (and short/long bins).\\
+\item
+  \textbf{Property \& seasonality}: hotel type (City/Resort), arrival
+  month/quarter.\\
+\item
+  \textbf{Interactions} (important for splits):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{lead\_time\_bin\ ×\ distribution\_channel},\\
+  \item
+    \texttt{lead\_time\_bin\ ×\ market\_segment},\\
+  \item
+    \texttt{is\_repeated\_guest\ ×\ channel},\\
+  \item
+    \texttt{special\_requests\ ×\ lead\_time\_bin}.
+  \end{itemize}
+\end{itemize}
+
+\subsubsection{Tree / Rule-Set Blueprint (starter split
+order)}\label{tree-rule-set-blueprint-starter-split-order}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{lead\_time\_bin}\\
+\item
+  \textbf{distribution\_channel / market\_segment}\\
+\item
+  \textbf{deposit\_type}\\
+\item
+  \textbf{is\_repeated\_guest}\\
+\item
+  \textbf{customer\_type}\\
+\item
+  \textbf{previous\_cancellations} (≥1 is strong)\\
+\item
+  \textbf{commitment signals}: special\_requests, car\_parking\_spaces\\
+\item
+  \textbf{hotel (City vs Resort)} and \textbf{season (month/quarter)}
+\end{enumerate}
+
+This ordering mirrors the stepwise pattern you observed and tends to
+yield interpretable paths (e.g., ``\textgreater90d \& Online TA \& No
+Deposit → high risk'').
+
+\subsubsection{Measurement \& Guardrails}\label{measurement-guardrails}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Leakage control:} Exclude \texttt{reservation\_status},
+  \texttt{reservation\_status\_date}, and any post-booking edits not
+  known at booking time.\\
+\item
+  \textbf{Calibration:} Report \textbf{Brier score}, reliability plots;
+  use isotonic or Platt scaling if needed.\\
+\item
+  \textbf{Drift checks:} Yearly stratification (2015--2017) and property
+  stratification (City vs Resort).\\
+\item
+  \textbf{Class balance:} Use stratified CV; evaluate PR-AUC in addition
+  to ROC-AUC.\\
+\item
+  \textbf{Economic framing:} Convert probabilities to \textbf{expected
+  value} with segment-specific costs (no-show cost, overbooking penalty,
+  deposit friction).
+\end{itemize}
+
+\subsubsection{Immediate Next Steps}\label{immediate-next-steps}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Lock the \textbf{tier edges} and \textbf{policy matrix} (per hotel
+  type).\\
+\item
+  Train a compact \textbf{GBT/Tree} with the feature set above; export
+  top 10 rules.\\
+\item
+  \textbf{Back-test} business policies (deposit, overbooking) on
+  historicals; compute uplift in net revenue vs baseline.\\
+\item
+  Ship a \textbf{scorecard}: \texttt{p(cancel)} + top 3 drivers per
+  booking for front-desk and RM.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ImportTok{from}\NormalTok{ scipy }\ImportTok{import}\NormalTok{ stats}
+
+\CommentTok{\# Chi{-}square test for categorical features}
+\NormalTok{categorical\_cols }\OperatorTok{=}\NormalTok{ [}\StringTok{\textquotesingle{}hotel\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}meal\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}market\_segment\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}distribution\_channel\textquotesingle{}}\NormalTok{, }
+                    \StringTok{\textquotesingle{}is\_repeated\_guest\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}customer\_type\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}deposit\_type\textquotesingle{}}\NormalTok{]}
+
+\NormalTok{chi2\_results }\OperatorTok{=}\NormalTok{ []}
+\ControlFlowTok{for}\NormalTok{ feature }\KeywordTok{in}\NormalTok{ categorical\_cols:}
+    \CommentTok{\# Create contingency table}
+\NormalTok{    contingency }\OperatorTok{=}\NormalTok{ pd.crosstab(df[feature], df[}\StringTok{\textquotesingle{}is\_canceled\textquotesingle{}}\NormalTok{])}
+\NormalTok{    chi2, p\_value, dof, expected }\OperatorTok{=}\NormalTok{ stats.chi2\_contingency(contingency)}
+    
+    \CommentTok{\# Calculate Cramér\textquotesingle{}s V for effect size}
+\NormalTok{    n }\OperatorTok{=}\NormalTok{ contingency.}\BuiltInTok{sum}\NormalTok{().}\BuiltInTok{sum}\NormalTok{()}
+\NormalTok{    cramers\_v }\OperatorTok{=}\NormalTok{ np.sqrt(chi2 }\OperatorTok{/}\NormalTok{ (n }\OperatorTok{*}\NormalTok{ (}\BuiltInTok{min}\NormalTok{(contingency.shape) }\OperatorTok{{-}} \DecValTok{1}\NormalTok{)))}
+    
+\NormalTok{    chi2\_results.append(\{}
+        \StringTok{\textquotesingle{}Feature\textquotesingle{}}\NormalTok{: feature,}
+        \StringTok{\textquotesingle{}Chi2\textquotesingle{}}\NormalTok{: chi2,}
+        \StringTok{\textquotesingle{}p{-}value\textquotesingle{}}\NormalTok{: p\_value,}
+        \StringTok{\textquotesingle{}Cramers\_V\textquotesingle{}}\NormalTok{: cramers\_v,}
+        \StringTok{\textquotesingle{}Significance\textquotesingle{}}\NormalTok{: }\StringTok{\textquotesingle{}Yes\textquotesingle{}} \ControlFlowTok{if}\NormalTok{ p\_value }\OperatorTok{\textless{}} \FloatTok{0.001} \ControlFlowTok{else} \StringTok{\textquotesingle{}No\textquotesingle{}}
+\NormalTok{    \})}
+
+\NormalTok{chi2\_df }\OperatorTok{=}\NormalTok{ pd.DataFrame(chi2\_results).sort\_values(}\StringTok{\textquotesingle{}Cramers\_V\textquotesingle{}}\NormalTok{, ascending}\OperatorTok{=}\VariableTok{False}\NormalTok{)}
+\BuiltInTok{print}\NormalTok{(}\StringTok{"Feature Importance (Statistical Tests)"}\NormalTok{)}
+\BuiltInTok{print}\NormalTok{(chi2\_df.to\_string(index}\OperatorTok{=}\VariableTok{False}\NormalTok{))}
 \end{Highlighting}
+\end{Shaded}
 
-\begin{Highlighting}
-\textcolor{black}{: }
-\textcolor{black}{}\textcolor{QuartoInternalColor1}{notebook controller is DISPOSED. }
-\textcolor{QuartoInternalColor1}{}\textcolor{QuartoInternalColor1}{View Jupyter <a href='command:jupyter.viewOutput'>log</a> for further details.}
-\end{Highlighting}
+\begin{verbatim}
+Feature Importance (Statistical Tests)
+             Feature         Chi2       p-value  Cramers_V Significance
+        deposit_type 27677.329241  0.000000e+00   0.481480          Yes
+      market_segment  8497.224090  0.000000e+00   0.266781          Yes
+distribution_channel  3745.794124  0.000000e+00   0.177128          Yes
+               hotel  2224.924904  0.000000e+00   0.136513          Yes
+       customer_type  2222.504160  0.000000e+00   0.136439          Yes
+   is_repeated_guest   857.406318 1.784125e-188   0.084744          Yes
+                meal   304.236177  1.321235e-64   0.050480          Yes
+\end{verbatim}
 
-\subsection{Example Plot}\label{example-plot}
+\subsection{Statistical Feature Importance --- Decision Notes
+(Categoricals)}\label{statistical-feature-importance-decision-notes-categoricals}
 
-Visualization of earnings surprise distribution to understand data
-characteristics
+\begin{quote}
+Evidence basis: your dataset-level tests (Cramér's V, χ²). No external
+sources used; guidance below is general in nature.
+\end{quote}
 
-\pandocbounded{\includegraphics[keepaspectratio]{main_files/figure-pdf/cell-7-output-1.png}}
+\subsubsection{Executive Summary}\label{executive-summary}
 
-\begin{Highlighting}
-\textcolor{black}{: }
-\textcolor{black}{}\textcolor{QuartoInternalColor1}{notebook controller is DISPOSED. }
-\textcolor{QuartoInternalColor1}{}\textcolor{QuartoInternalColor1}{View Jupyter <a href='command:jupyter.viewOutput'>log</a> for further details.}
-\end{Highlighting}
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Keep primary signals}: \texttt{market\_segment\ (V≈0.27)} and
+  \texttt{distribution\_channel\ (V≈0.18)} are your strongest
+  \emph{legit} categorical predictors.
+\item
+  \textbf{Secondary signals}: \texttt{hotel\ (≈0.14)} and
+  \texttt{customer\_type\ (≈0.14)} carry meaningful segmentation; useful
+  for interaction splits.
+\item
+  \textbf{Business-critical weak signal}:
+  \texttt{is\_repeated\_guest\ (≈0.08,\ only\ \textasciitilde{}3.2\%\ prevalence)}
+  --- small effect size but high business value → retain.
+\item
+  \textbf{Deprioritize}: \texttt{meal\ (≈0.05)} --- likely negligible
+  once other features are in the model.
+\item
+  \textbf{Exclude}: \texttt{deposit\_type\ (≈0.48)} due to leakage for a
+  \emph{behavioral} cancellation model. (Consider a separate
+  policy/uplift model if you want to simulate deposit levers.)
+\end{itemize}
 
-\begin{Highlighting}
-\textcolor{black}{: }
-\textcolor{black}{}\textcolor{QuartoInternalColor1}{notebook controller is DISPOSED. }
-\textcolor{QuartoInternalColor1}{}\textcolor{QuartoInternalColor1}{View Jupyter <a href='command:jupyter.viewOutput'>log</a> for further details.}
-\end{Highlighting}
+\subsubsection{Practical Modeling
+Guidance}\label{practical-modeling-guidance}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Encoding}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    One-hot for low/medium cardinality: \texttt{market\_segment},
+    \texttt{distribution\_channel}, \texttt{hotel},
+    \texttt{customer\_type}.
+  \item
+    Binary keep: \texttt{is\_repeated\_guest}.
+  \item
+    Consider \textbf{target/James-Stein encoding} with fold-wise CV for
+    any high-card features (if later added), to avoid leakage.
+  \end{itemize}
+\item
+  \textbf{Interactions to predefine (high value)}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{market\_segment\ ×\ distribution\_channel} (channel--segment
+    coupling).
+  \item
+    \texttt{hotel\ ×\ customer\_type} (your note) --- city vs resort
+    differs by party type/contracting.
+  \item
+    Add cross with \textbf{lead\_time\_bin} (numeric side):
+    \texttt{lead\_time\_bin\ ×\ \{market\_segment,\ distribution\_channel,\ is\_repeated\_guest\}}.
+  \end{itemize}
+\item
+  \textbf{Regularization \& CV}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Use stratified K-fold CV; log-loss/Brier and calibration as primary
+    metrics (ROC-AUC secondary).
+  \item
+    If using GLM/Logit, apply L1/L2 to stabilize small effects
+    (esp.~\texttt{is\_repeated\_guest}).
+  \item
+    For trees/GBTs, rely on \textbf{permutation importance} and
+    \textbf{SHAP} post-hoc to validate that meal remains negligible.
+  \end{itemize}
+\end{itemize}
+
+\subsubsection{Diagnostic Checks \&
+Caveats}\label{diagnostic-checks-caveats}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Collinearity among categoricals}: inspect a V-matrix between
+  \texttt{market\_segment} and \texttt{distribution\_channel}. If highly
+  redundant, prefer:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    keep both \textbf{plus} their interaction, or
+  \item
+    collapse to an engineered ``acquisition pathway'' feature.
+  \end{itemize}
+\item
+  \textbf{Effect size vs p-value}: with N≈119k, p\textless0.001 is
+  trivial; prioritize \textbf{effect sizes} (V, MI) and
+  \textbf{out-of-fold gain}.
+\item
+  \textbf{Bias-corrected association}: optionally recompute
+  \textbf{bias-corrected Cramér's V} to confirm ordering (small-sample
+  bias is minor here but still good hygiene).
+\item
+  \textbf{Rare class handling}: \texttt{is\_repeated\_guest} is sparse;
+  track its \textbf{confidence intervals} and stability across folds to
+  avoid over/underweighting.
+\end{itemize}
+
+\subsubsection{Tiers for the Model}\label{tiers-for-the-model}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Primary}: \texttt{market\_segment},
+  \texttt{distribution\_channel}.
+\item
+  \textbf{Secondary}: \texttt{hotel}, \texttt{customer\_type}.
+\item
+  \textbf{Tertiary (keep for business use)}:
+  \texttt{is\_repeated\_guest}.
+\item
+  \textbf{Deprioritize/Drop}: \texttt{meal} (retain only if it
+  consistently shows non-zero permutation importance).
+\end{itemize}
+
+\subsubsection{Minimal Experiment Plan}\label{minimal-experiment-plan}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Baseline (categoricals only)}: OHE of Primary + Secondary;
+  evaluate Brier, ROC-AUC, PR-AUC; check calibration.
+\item
+  \textbf{+ Business flag}: add \texttt{is\_repeated\_guest}; confirm
+  uplift on calibration and precision for high-value cohorts.
+\item
+  \textbf{+ Interactions}: add \texttt{hotel×customer\_type},
+  \texttt{market\_segment×distribution\_channel}; retain if out-of-fold
+  gain \textgreater{} tiny threshold (e.g., ΔBrier ≤ −0.002).
+\item
+  \textbf{+ Lead-time cross}: add \texttt{lead\_time\_bin} interactions
+  (if lead time is in numeric block); expect monotone splits.
+\item
+  \textbf{Prune}: drop \texttt{meal} unless it shows stable
+  \textgreater0 permutation importance across folds.
+\end{enumerate}
+
+\subsubsection{Nice-to-Haves (if time
+allows)}\label{nice-to-haves-if-time-allows}
+
+\begin{itemize}
+\tightlist
+\item
+  Compute \textbf{mutual information (MI)} for categoricals as a
+  robustness check vs Cramér's V.
+\item
+  Train a compact tree/GBT and extract \textbf{top interpreter rules} to
+  align with business policies (direct vs TA, long vs short lead, repeat
+  vs new).
+\end{itemize}
 
 \section{Models}\label{models}
 
@@ -477,12 +1427,36 @@ characteristics
   environment capture (Python + key pkg versions).
 \end{itemize}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Train model using generated features}
+\ImportTok{import}\NormalTok{ sys}
+\ImportTok{from}\NormalTok{ pathlib }\ImportTok{import}\NormalTok{ Path}
+\NormalTok{sys.path.append(}\BuiltInTok{str}\NormalTok{(Path.cwd() }\OperatorTok{/} \StringTok{\textquotesingle{}src\textquotesingle{}}\NormalTok{))}
+\ImportTok{from}\NormalTok{ hcr.train }\ImportTok{import}\NormalTok{ main }\ImportTok{as}\NormalTok{ train\_main}
+\NormalTok{CONFIG }\OperatorTok{=} \StringTok{\textquotesingle{}configs/exp\_baseline.yaml\textquotesingle{}}
+\NormalTok{train\_main(CONFIG)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Evaluate model and save simple plots}
+\ImportTok{import}\NormalTok{ sys}
+\ImportTok{from}\NormalTok{ pathlib }\ImportTok{import}\NormalTok{ Path}
+\NormalTok{sys.path.append(}\BuiltInTok{str}\NormalTok{(Path.cwd() }\OperatorTok{/} \StringTok{\textquotesingle{}src\textquotesingle{}}\NormalTok{))}
+\ImportTok{from}\NormalTok{ hcr.}\BuiltInTok{eval} \ImportTok{import}\NormalTok{ main }\ImportTok{as}\NormalTok{ eval\_main}
+\NormalTok{CONFIG }\OperatorTok{=} \StringTok{\textquotesingle{}configs/exp\_baseline.yaml\textquotesingle{}}
+\NormalTok{eval\_main(CONFIG)}
+\end{Highlighting}
+\end{Shaded}
+
 \begin{verbatim}
 Metrics: {'accuracy': 1.0, 'auc': None, 'features': ['surprise'], 'n_test': 1}
 Saved artifacts/figures/metrics.pdf
 \end{verbatim}
 
-\pandocbounded{\includegraphics[keepaspectratio]{main_files/figure-pdf/cell-9-output-2.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{main_files/figure-pdf/cell-15-output-2.png}}
 
 \begin{Highlighting}
 \textcolor{black}{: }
@@ -530,31 +1504,24 @@ Saved artifacts/figures/metrics.pdf
 
 \section{Conclusion and Next Steps}\label{conclusion-and-next-steps}
 
-\section{Resources}\label{resources}
+\section{References}\label{references}
 
-\begin{itemize}
-\item
-  \textbf{TF--IDF Vectorizer API}\\
-  Official docs for TfidfVectorizer (parameters like ngram\_range,
-  min\_df, max\_features, etc.)\\
-  https://scikit-learn.org/stable/modules/generated/sklearn.feature\_extraction.text.TfidfVectorizer.html
-\item
-  \textbf{Text Analytics Tutorial}\\
-  End-to-end guide: load raw text, vectorize with TF--IDF, train a
-  linear classifier\\
-  https://scikit-learn.org/1.4/tutorial/text\_analytics/working\_with\_text\_data.html
-\item
-  \textbf{TF--IDF Math \& Intuition}\\
-  Blog post with mathematical derivation, code examples, and visual
-  intuition for term- and document-frequency weighting\\
-  https://medium.com/@rohit\_batra/multi-class-text-classification-with-scikit-learn-using-tf-idf-model-161d395ce374
-\item
-  \textbf{Logistic Regression API}\\
-  Full parameter reference (\texttt{solver}, \texttt{C},
-  \texttt{penalty}, \texttt{class\_weight}, etc.) including valid ranges
-  and examples\\
-  https://scikit-learn.org/stable/modules/generated/sklearn.linear\_model.LogisticRegression.html
-\end{itemize}
+The canonical BibTeX entry for this dataset is stored in
+\texttt{references.bib} (key:
+\texttt{jessemostipak\_hotel\_booking\_demand}).
+
+\phantomsection\label{refs}
+\begin{CSLReferences}{1}{0}
+\bibitem[\citeproctext]{ref-antonio_almeida_nunes_2019}
+Antonio, N., A. de Almeida, and L. Nunes. 2019. {``Hotel Booking Demand
+Datasets.''} \emph{Data in Brief} 22: 41--49.
+\url{https://doi.org/10.1016/j.dib.2018.11.126}.
+
+\bibitem[\citeproctext]{ref-jessemostipak_hotel_booking_demand}
+Mostipak, J. 2020. {``Hotel Booking Demand.''} Kaggle dataset.
+\url{https://www.kaggle.com/datasets/jessemostipak/hotel-booking-demand}.
+
+\end{CSLReferences}
 
 
 

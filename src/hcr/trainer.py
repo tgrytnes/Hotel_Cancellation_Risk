@@ -18,17 +18,8 @@ def train_and_eval(
 
     # Inject common args
     input_dim = Xtr.shape[1]
-    # Trainer params (epochs, batch_size, lr) for DL models
-    trainer = cfg.trainer or {}
-    if model_name in ("mlp_torch", "mlp_tf"):
-        model_args.setdefault("epochs", int(trainer.get("epochs", 10)))
-        model_args.setdefault("batch_size", int(trainer.get("batch_size", 256)))
-        model_args.setdefault("lr", float(trainer.get("lr", 1e-3)))
-        # compute prefs
-        comp = cfg.compute or {}
-        model_args.setdefault("mixed_precision", comp.get("mixed_precision", "auto"))
-        model_args.setdefault("backend", comp.get("backend", "auto"))
-        model_args.setdefault("input_dim", input_dim)
+    # For future DL models, trainer configuration would go here
+    # Currently only sklearn models are supported
 
     model = build_model(model_name, input_dim=input_dim, **model_args)
     model.fit(Xtr, ytr)

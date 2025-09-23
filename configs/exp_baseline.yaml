@@ -1,23 +1,13 @@
 seed: 42
 paths:
-  raw_prices: data/raw/prices.csv
-  raw_earnings: data/raw/earnings.csv
+  raw_data: data/raw
   artifacts: artifacts
-task: tabular
+task: hotel_cancellation
 train:
-  target: y_d1
+  target: is_canceled
   test_size: 0.25
-  features: ["surprise"]
-  # choose from: logreg_sklearn | mlp_torch | mlp_tf
-  model: "logreg_sklearn"
-  # model-specific args
+  date_col: null  # No date column for chronological split in synthetic data
+  # Model choice: logreg_baseline (recommended) | logreg_l1 | logreg_sklearn
+  model: "logreg_baseline"
+  # Model-specific args (can override defaults)
   model_args: {}
-trainer:
-  epochs: 10
-  batch_size: 256
-  lr: 0.001
-compute:
-  # backend: auto|torch|tensorflow|cpu
-  backend: auto
-  # mixed_precision: auto|true|false
-  mixed_precision: auto

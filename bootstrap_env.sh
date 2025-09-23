@@ -21,7 +21,8 @@ PROJECT_ROOT="$SCRIPT_DIR"
 # Defaults
 VENVDIR=".venv"
 PYTHON_BIN=""
-PY_VER=""
+# Default to Python 3.11 for the project virtualenv. Can be overridden with --python or --python-version
+PY_VER="3.11"
 INSTALL_SYSTEM=true
 INSTALL_PYTHON=true
 INSTALL_TEX=true
@@ -37,7 +38,7 @@ Bootstrap local environment for this project.
 Options:
   --venv DIR              Virtualenv directory (default: .venv)
   --python BIN            Python binary to use (e.g. python3.11)
-  --python-version X.Y    Install/use Python version (e.g. 3.11)
+  --python-version X.Y    Install/use Python version (e.g. 3.11). Default: 3.11
   --no-system             Skip system package installs (brew/apt)
   --no-python             Do not install Python via brew/apt
   --no-tex                Do not install TeX

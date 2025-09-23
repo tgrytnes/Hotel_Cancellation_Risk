@@ -2,11 +2,13 @@
 __pycache__/
 *.pyc
 .venv/
+.venv*/
 .env
 # Notebooks
 .ipynb_checkpoints/
 # Artifacts & data
 artifacts/
+Assignment/
 data/processed/
 data/raw/
 # OS
@@ -23,4 +25,12 @@ venv/
 *.venv
 
 .quarto/
+# Quarto & LaTeX build artifacts
+notebooks/*_files/
+notebooks/*.aux
+notebooks/*.fdb_latexmk
+notebooks/*.fls
+notebooks/*.log
+notebooks/*.out
+
 notebooks/out/

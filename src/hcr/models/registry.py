@@ -20,6 +20,4 @@ def build_model(name: str, **kwargs):
 
 # Import side-effects to populate registry
 from . import sklearn_logreg  # noqa: F401
-from . import torch_mlp  # noqa: F401
-from . import tf_mlp  # noqa: F401
 
