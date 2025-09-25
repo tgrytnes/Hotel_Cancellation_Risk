@@ -23,7 +23,7 @@ build/
 # Virtualenv
 venv/
 *.venv
-
+.claude/
 .quarto/
 # Quarto & LaTeX build artifacts
 notebooks/*_files/

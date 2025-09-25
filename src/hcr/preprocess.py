@@ -2,7 +2,12 @@ from __future__ import annotations
 import pandas as pd
 import numpy as np
 from pathlib import Path
-from .config import load_config
+import yaml
+
+def load_config(path: str):
+    """Simple YAML config loader."""
+    with open(path, "r") as f:
+        return yaml.safe_load(f)
 from .utils import ensure_dir
 
 def clean_hotel_data(df: pd.DataFrame) -> pd.DataFrame:
@@ -27,7 +32,13 @@ def clean_hotel_data(df: pd.DataFrame) -> pd.DataFrame:
     df_cleaned['country'] = df_cleaned['country'].fillna('Unknown')
 
     # Remove data leakage features
-    leakage_cols = ['reservation_status', 'reservation_status_date', 'deposit_type']
+    leakage_cols = [
+        'reservation_status',
+        'reservation_status_date',
+        'deposit_type',
+        'booking_changes',
+        'assigned_room_type',
+    ]
     existing_leakage_cols = [col for col in leakage_cols if col in df_cleaned.columns]
     if existing_leakage_cols:
         df_cleaned = df_cleaned.drop(columns=existing_leakage_cols)

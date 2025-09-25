@@ -1,88 +1,131 @@
 from __future__ import annotations
 import pandas as pd
 import numpy as np
+from pandas.api.types import CategoricalDtype
 from pathlib import Path
-from .config import load_config
+import yaml
+
+def load_config(path: str):
+    """Simple YAML config loader."""
+    with open(path, "r") as f:
+        return yaml.safe_load(f)
 from .utils import ensure_dir
-from .labels import prepare_cancellation_target
+
+LEAD_TIME_BINS = [-1, 7, 30, 90, np.inf]
+LEAD_TIME_LABELS = ["Last_Minute", "Short", "Medium", "Long"]
+MIN_SEGMENT_CHANNEL_FREQ = 200
+
 
 def build_hotel_features(df: pd.DataFrame) -> pd.DataFrame:
     """
     Build hotel booking features based on EDA insights from main.ipynb.
 
+    The notebook prioritises a compact feature set: preserve the strongest
+    raw signals, add lead-time buckets, total stay nights, and the
+    market-segment/ distribution interaction. We intentionally avoid the
+    larger collection of heuristic flags that were never discussed so the
+    code now mirrors the written methodology.
+
     Args:
         df: Cleaned hotel booking DataFrame
 
     Returns:
-        DataFrame with engineered features
+        DataFrame with engineered, numeric features
     """
+    if df.empty:
+        return df.copy()
+
     features = df.copy()
 
-    # Lead time categories (strong predictor from EDA)
-    features['lead_time_category'] = pd.cut(
-        features['lead_time'],
-        bins=[0, 7, 30, 90, 400],
-        labels=['Last_Minute', 'Short', 'Medium', 'Long'],
-        include_lowest=True
+    # Total stay length (weekend + week nights) as highlighted in the report.
+    features['total_stay_nights'] = (
+        features['stays_in_weekend_nights'] + features['stays_in_week_nights']
     )
 
-    # Total nights stayed
-    features['total_nights'] = features['stays_in_weekend_nights'] + features['stays_in_week_nights']
+    # Lead time buckets that capture the threshold effects described in the EDA.
+    lead_time_bucket = pd.cut(
+        features['lead_time'],
+        bins=LEAD_TIME_BINS,
+        labels=LEAD_TIME_LABELS,
+        include_lowest=True,
+        right=True,
+    )
+    features['lead_time_bucket'] = (
+        lead_time_bucket.cat.add_categories(['Missing']).fillna('Missing')
+    )
 
-    # Create stay pattern features
-    features['weekend_ratio'] = features['stays_in_weekend_nights'] / (features['total_nights'] + 1e-6)
-    features['is_weekend_only'] = (features['stays_in_weekend_nights'] > 0) & (features['stays_in_week_nights'] == 0)
-    features['is_long_stay'] = features['total_nights'] >= 7
+    # Market segment × distribution channel interaction feature.
+    features['segment_channel'] = (
+        features['market_segment'].fillna('Unknown').astype(str)
+        + '__'
+        + features['distribution_channel'].fillna('Unknown').astype(str)
+    )
 
-    # Guest composition features
-    features['total_guests'] = features['adults'] + features['children'] + features['babies']
-    features['has_children'] = (features['children'] > 0).astype(int)
-    features['has_babies'] = (features['babies'] > 0).astype(int)
-    features['is_solo_traveler'] = (features['total_guests'] == 1).astype(int)
-    features['is_family'] = ((features['children'] > 0) | (features['babies'] > 0)).astype(int)
+    if 'segment_channel' in features:
+        counts = features['segment_channel'].value_counts(dropna=False)
+        keep = counts[counts >= MIN_SEGMENT_CHANNEL_FREQ].index
+        features.loc[~features['segment_channel'].isin(keep), 'segment_channel'] = 'Other'
 
-    # ADR (Average Daily Rate) features
-    features['adr_per_guest'] = features['adr'] / features['total_guests']
-    features['total_cost'] = features['adr'] * features['total_nights']
-    features['is_complimentary'] = (features['adr'] == 0).astype(int)
+    numeric_cols = [
+        'lead_time',
+        'adults',
+        'children',
+        'babies',
+        'is_repeated_guest',
+        'previous_cancellations',
+        'previous_bookings_not_canceled',
+        'booking_changes',
+        'agent',
+        'company',
+        'days_in_waiting_list',
+        'adr',
+        'required_car_parking_spaces',
+        'total_of_special_requests',
+        'stays_in_weekend_nights',
+        'stays_in_week_nights',
+        'total_stay_nights',
+    ]
+    numeric_cols = [col for col in numeric_cols if col in features.columns]
 
-    # Booking behavior features
-    features['has_special_requests'] = (features['total_of_special_requests'] > 0).astype(int)
-    features['high_maintenance'] = (features['total_of_special_requests'] >= 3).astype(int)
-    features['needs_parking'] = (features['required_car_parking_spaces'] > 0).astype(int)
+    categorical_cols = [
+        'hotel',
+        'customer_type',
+        'market_segment',
+        'distribution_channel',
+        'lead_time_bucket',
+        'segment_channel',
+    ]
 
-    # Guest history features
-    features['total_previous_bookings'] = features['previous_cancellations'] + features['previous_bookings_not_canceled']
-    features['cancellation_history_ratio'] = features['previous_cancellations'] / (features['total_previous_bookings'] + 1e-6)
-    features['has_cancellation_history'] = (features['previous_cancellations'] > 0).astype(int)
+    cat_feature_frames = []
+    for col in categorical_cols:
+        if col not in features.columns:
+            continue
+        series = features[col]
+        if isinstance(series.dtype, CategoricalDtype):
+            series = series.astype(str)
+        else:
+            series = series.fillna('Unknown').astype(str)
+        cat_feature_frames.append(
+            pd.get_dummies(series, prefix=col, prefix_sep='__', dtype=float)
+        )
 
-    # Channel/Market features (combine related categories)
-    features['is_direct_booking'] = (features['distribution_channel'] == 'Direct').astype(int)
-    features['is_online_ta'] = (features['market_segment'] == 'Online TA').astype(int)
-    features['is_corporate'] = (features['market_segment'] == 'Corporate').astype(int)
-    features['is_group_booking'] = (features['market_segment'] == 'Groups').astype(int)
+    categorical_features = (
+        pd.concat(cat_feature_frames, axis=1) if cat_feature_frames else pd.DataFrame(index=features.index)
+    )
 
-    # Advance booking patterns
-    features['is_last_minute'] = (features['lead_time'] <= 7).astype(int)
-    features['is_far_advance'] = (features['lead_time'] >= 90).astype(int)
+    target_col = 'is_canceled'
+    output_parts = []
+    if target_col in features.columns:
+        output_parts.append(features[[target_col]].astype(int))
+    if numeric_cols:
+        output_parts.append(features[numeric_cols].astype(float))
+    if not categorical_features.empty:
+        output_parts.append(categorical_features)
 
-    # Hotel type
-    features['is_city_hotel'] = (features['hotel'] == 'City Hotel').astype(int)
+    if not output_parts:
+        return pd.DataFrame(index=features.index)
 
-    # Risk factors combination
-    features['low_commitment'] = (
-        (features['lead_time'] > 90) &
-        (features['total_of_special_requests'] == 0) &
-        (features['required_car_parking_spaces'] == 0)
-    ).astype(int)
-
-    features['high_commitment'] = (
-        (features['is_repeated_guest'] == 1) |
-        (features['total_of_special_requests'] >= 2) |
-        (features['required_car_parking_spaces'] > 0)
-    ).astype(int)
-
-    return features
+    return pd.concat(output_parts, axis=1)
 
 def main(config_path: str = "configs/exp_baseline.yaml"):
     cfg = load_config(config_path)
@@ -96,18 +139,20 @@ def main(config_path: str = "configs/exp_baseline.yaml"):
     features = build_hotel_features(df)
     print(f"After feature engineering: {features.shape}")
 
-    # Prepare final dataset with target
-    final_data = prepare_cancellation_target(features)
-    print(f"Final dataset with target: {final_data.shape}")
+    # Features are ready
+    print(f"Final dataset: {features.shape}")
 
     # Save features
     out = Path(cfg.paths['artifacts']) / "features.csv"
     ensure_dir(out.parent)
-    final_data.to_csv(out, index=False)
+    features.to_csv(out, index=False)
 
     print(f"Saved features to {out}")
-    print(f"Feature columns: {len([col for col in final_data.columns if col != 'is_canceled'])}")
-    print(f"Cancellation rate: {final_data['is_canceled'].mean():.3f}")
+    if 'is_canceled' in features.columns:
+        print(f"Feature columns: {len([col for col in features.columns if col != 'is_canceled'])}")
+        print(f"Cancellation rate: {features['is_canceled'].mean():.3f}")
+    else:
+        print(f"Feature columns: {len(features.columns)}")
 
 if __name__ == "__main__":
     import sys

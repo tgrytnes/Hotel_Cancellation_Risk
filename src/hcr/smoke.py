@@ -2,11 +2,15 @@ from __future__ import annotations
 from pathlib import Path
 import pandas as pd
 import numpy as np
-from .config import load_config
+import yaml
+
+def load_config(path: str):
+    """Simple YAML config loader."""
+    with open(path, "r") as f:
+        return yaml.safe_load(f)
 from .utils import ensure_dir
 from .preprocess import clean_hotel_data
 from .features import build_hotel_features
-from .labels import prepare_cancellation_target
 
 def main(config_path: str = "configs/exp_baseline.yaml"):
     cfg = load_config(config_path)
@@ -53,23 +57,19 @@ def main(config_path: str = "configs/exp_baseline.yaml"):
     features = build_hotel_features(cleaned_data)
     print(f"After feature engineering: {features.shape}")
 
-    # Test target preparation
-    final_data = prepare_cancellation_target(features)
-    print(f"Final dataset: {final_data.shape}")
-
     # Basic validation checks
-    assert 'is_canceled' in final_data.columns, "Target column missing"
-    assert final_data['is_canceled'].isin([0, 1]).all(), "Target should be binary"
-    assert not final_data.empty, "Dataset should not be empty"
+    assert 'is_canceled' in features.columns, "Target column missing"
+    assert features['is_canceled'].isin([0, 1]).all(), "Target should be binary"
+    assert not features.empty, "Dataset should not be empty"
 
     # Save smoke test output
     out = Path(cfg.paths['artifacts']) / "hotel_smoke_test.csv"
     ensure_dir(out.parent)
-    final_data.to_csv(out, index=False)
+    features.to_csv(out, index=False)
 
     print(f"Smoke test PASSED ✅")
     print(f"Saved smoke test data to {out}")
-    print(f"Features: {[col for col in final_data.columns if col != 'is_canceled']}")
+    print(f"Features: {[col for col in features.columns if col != 'is_canceled']}")
 
 if __name__ == "__main__":
     import sys

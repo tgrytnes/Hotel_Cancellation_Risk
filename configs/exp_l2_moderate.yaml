@@ -1,0 +1,13 @@
+seed: 42
+paths:
+  raw_data: data/raw
+  artifacts: artifacts
+task: hotel_cancellation
+train:
+  target: is_canceled
+  test_size: 0.25
+  date_col: null
+  model: "logreg_l2"
+  model_args:
+    C: 0.1  # Moderate L2 regularization
+    penalty: "l2"

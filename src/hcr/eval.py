@@ -4,7 +4,12 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import confusion_matrix, classification_report, roc_curve, precision_recall_curve
-from .config import load_config
+import yaml
+
+def load_config(path: str):
+    """Simple YAML config loader."""
+    with open(path, "r") as f:
+        return yaml.safe_load(f)
 
 def plot_roc_curve(fpr, tpr, roc_auc, save_path):
     """Plot ROC curve."""
@@ -65,7 +70,7 @@ def main(config_path: str = "configs/exp_baseline.yaml"):
     cfg = load_config(config_path)
 
     # Load metrics
-    metrics_path = Path(cfg.paths['artifacts']) / "metrics.json"
+    metrics_path = Path(cfg['paths']['artifacts']) / "metrics.json"
     with open(metrics_path) as f:
         metrics = json.load(f)
 
@@ -80,7 +85,7 @@ def main(config_path: str = "configs/exp_baseline.yaml"):
     print(f"  PR-AUC:   {metrics.get('pr_auc', 'N/A'):.3f}")
 
     # Create figures directory
-    fig_dir = Path(cfg.paths['artifacts']) / "figures"
+    fig_dir = Path(cfg['paths']['artifacts']) / "figures"
     fig_dir.mkdir(parents=True, exist_ok=True)
 
     # Plot basic metrics bar chart

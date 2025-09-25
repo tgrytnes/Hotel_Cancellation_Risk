@@ -257,9 +257,6 @@
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
 \makeatother
-\makeatletter
-\definecolor{QuartoInternalColor1}{rgb}{0.91,0.36,0.35}
-\makeatother
 \usepackage{bookmark}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
@@ -799,7 +796,10 @@ imbalanced dataset. This is sufficient minority class representation for
 standard algorithms, though we may benefit from stratified sampling
 during model validation.
 
-\subsection{Correlation Analysis}\label{correlation-analysis}
+\subsection{Numerical Features
+Analysis}\label{numerical-features-analysis}
+
+\subsubsection{Correlation Analysis}\label{correlation-analysis}
 
 \textbf{Purpose:} Correlation analysis helps identify linear
 relationships between numerical features and our target variable. Strong
@@ -850,7 +850,48 @@ Note: Correlation is not equal causation. Effects may sharpen or shift
 once we control for other variables.
 \end{quote}
 
-\subsection{Cancellation Pattern
+\subsection{Categorical Features
+Analysis}\label{categorical-features-analysis}
+
+\subsubsection{Statistical Tests}\label{statistical-tests}
+
+\textbf{Purpose:} Quantify the predictive strength of categorical
+features using Chi-square tests and Cramer's V effect sizes. This
+statistical foundation guides which features to prioritize in modeling.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ImportTok{from}\NormalTok{ scipy }\ImportTok{import}\NormalTok{ stats}
+
+\CommentTok{\# Chi{-}square test for categorical features}
+\NormalTok{categorical\_cols }\OperatorTok{=}\NormalTok{ [}\StringTok{\textquotesingle{}hotel\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}meal\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}market\_segment\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}distribution\_channel\textquotesingle{}}\NormalTok{, }
+                    \StringTok{\textquotesingle{}is\_repeated\_guest\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}customer\_type\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}deposit\_type\textquotesingle{}}\NormalTok{]}
+
+\NormalTok{chi2\_results }\OperatorTok{=}\NormalTok{ []}
+\ControlFlowTok{for}\NormalTok{ feature }\KeywordTok{in}\NormalTok{ categorical\_cols:}
+    \CommentTok{\# Create contingency table}
+\NormalTok{    contingency }\OperatorTok{=}\NormalTok{ pd.crosstab(df[feature], df[}\StringTok{\textquotesingle{}is\_canceled\textquotesingle{}}\NormalTok{])}
+\NormalTok{    chi2, p\_value, dof, expected }\OperatorTok{=}\NormalTok{ stats.chi2\_contingency(contingency)}
+    
+    \CommentTok{\# Calculate Cramér\textquotesingle{}s V for effect size}
+\NormalTok{    n }\OperatorTok{=}\NormalTok{ contingency.}\BuiltInTok{sum}\NormalTok{().}\BuiltInTok{sum}\NormalTok{()}
+\NormalTok{    cramers\_v }\OperatorTok{=}\NormalTok{ np.sqrt(chi2 }\OperatorTok{/}\NormalTok{ (n }\OperatorTok{*}\NormalTok{ (}\BuiltInTok{min}\NormalTok{(contingency.shape) }\OperatorTok{{-}} \DecValTok{1}\NormalTok{)))}
+    
+\NormalTok{    chi2\_results.append(\{}
+        \StringTok{\textquotesingle{}Feature\textquotesingle{}}\NormalTok{: feature,}
+        \StringTok{\textquotesingle{}Chi2\textquotesingle{}}\NormalTok{: chi2,}
+        \StringTok{\textquotesingle{}p{-}value\textquotesingle{}}\NormalTok{: p\_value,}
+        \StringTok{\textquotesingle{}Cramers\_V\textquotesingle{}}\NormalTok{: cramers\_v,}
+        \StringTok{\textquotesingle{}Significance\textquotesingle{}}\NormalTok{: }\StringTok{\textquotesingle{}Yes\textquotesingle{}} \ControlFlowTok{if}\NormalTok{ p\_value }\OperatorTok{\textless{}} \FloatTok{0.001} \ControlFlowTok{else} \StringTok{\textquotesingle{}No\textquotesingle{}}
+\NormalTok{    \})}
+
+\NormalTok{chi2\_df }\OperatorTok{=}\NormalTok{ pd.DataFrame(chi2\_results).sort\_values(}\StringTok{\textquotesingle{}Cramers\_V\textquotesingle{}}\NormalTok{, ascending}\OperatorTok{=}\VariableTok{False}\NormalTok{)}
+\BuiltInTok{print}\NormalTok{(}\StringTok{"Feature Importance (Statistical Tests)"}\NormalTok{)}
+\BuiltInTok{print}\NormalTok{(chi2\_df.to\_string(index}\OperatorTok{=}\VariableTok{False}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Cancellation Pattern
 Analysis}\label{cancellation-pattern-analysis}
 
 \textbf{Purpose}: Different customer segments and booking types exhibit
@@ -901,608 +942,349 @@ risk.
 \end{Highlighting}
 \end{Shaded}
 
-\pandocbounded{\includegraphics[keepaspectratio]{main_files/figure-pdf/cell-12-output-1.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{main_files/figure-pdf/cell-13-output-1.png}}
 
-\subsection{Categorical Risk \& Actions --- Refined, Decision-Ready
-Summary}\label{categorical-risk-actions-refined-decision-ready-summary}
+\subsection{Feature Importance
+Summary}\label{feature-importance-summary}
 
-\begin{quote}
-Evidence basis: your Hotel Booking Demand dataset analysis. No external
-sources used; figures are dataset-specific (general in nature).
-\end{quote}
+Based on statistical tests and correlation analysis, we prioritize
+features for modeling:
 
-\subsubsection{Segment Risk Snapshot}\label{segment-risk-snapshot}
+\subsubsection{Feature Ranking for
+Modeling}\label{feature-ranking-for-modeling}
+
+\textbf{Must Include (Effect Size \textgreater{} 0.15):}
+
+\begin{itemize}
+\tightlist
+\item
+  market\_segment (V=0.27)
+\item
+  distribution\_channel (V=0.18)
+\item
+  lead\_time (r=0.29)
+\end{itemize}
+
+\textbf{Should Include (Effect Size 0.05-0.15):}
+
+\begin{itemize}
+\tightlist
+\item
+  hotel (V=0.14)
+\item
+  customer\_type (V=0.14)
+\item
+  is\_repeated\_guest (V=0.08)\emph{ }Keep despite low effect - business
+  critical
+\end{itemize}
+
+\textbf{Consider Dropping:}
+
+\begin{itemize}
+\tightlist
+\item
+  meal (V=0.05) - minimal predictive value
+\end{itemize}
+
+\textbf{Feature Engineering Opportunities:}
+
+\begin{itemize}
+\tightlist
+\item
+  lead\_time bins (clear threshold effects)
+\item
+  market\_segment × distribution interactions
+\item
+  total\_stay\_nights (weekend + week)
+\end{itemize}
+
+\subsection{Modelling Implications}\label{modelling-implications}
+
+Our EDA highlights a mix of linear and non-linear relationships.
+Logistic regression offers a transparent baseline, while
+gradient-boosted trees (GBT) can capture the strong interactions (e.g.,
+market segment × channel) and non-linear thresholds in lead time.
+
+Key engineered features include binned lead\_time, total\_stay\_nights,
+and selected interaction terms (especially market\_segment ×
+distribution\_channel). Customer commitment signals such as special
+requests and parking spaces should also be retained.
+
+The target variable shows a moderate imbalance (37\% cancellations).
+Standard classifiers can handle this, but stratified splits and
+calibration methods (e.g., class weights, probability calibration) will
+help ensure robust probability estimates.
+
+Together, these insights motivate a two-model strategy: a simple,
+interpretable logistic regression baseline and a flexible,
+high-performance GBT model that can leverage the richer feature set.
+
+\subsection{Finalized Feature
+Engineering}\label{finalized-feature-engineering}
+
+Running \texttt{src/hcr/features.py} on the cleaned bookings produces
+\texttt{artifacts/features.csv} with \textbf{50 modeling features} plus
+the target column. Every column is numeric: raw signals (lead\_time,
+adr, guest counts), engineered aggregations (total\_stay\_nights),
+lead\_time buckets, and curated segment×channel interactions with rare
+pairings grouped into \texttt{Other}.
+
+This table is our canonical modeling input. Logistic regression can
+consume it after optional standardization of the continuous fields,
+while tree-based models (e.g., gradient-boosted trees) can use it
+directly. Regenerating the file is deterministic via
+\texttt{PYTHONPATH=src\ python3\ -m\ hcr.features}, ensuring training
+reproducibility.
+
+\section{Models}\label{models}
+
+We train three classifiers on \texttt{artifacts/features.csv} to balance
+interpretability, predictive power, and baseline comparison. All operate
+on the same engineered feature table described above:
+
+\begin{itemize}
+\item
+  \textbf{Regularized Logistic Regression}: Baseline reference model.
+  Before fitting we standardize continuous fields (lead\_time, adr,
+  total\_stay\_nights, etc.) and use class-weight balancing so the 37\%
+  cancellation rate does not skew the decision boundary. The model
+  yields calibrated probabilities and feature weights for stakeholder
+  interpretation.
+\item
+  \textbf{Gradient-Boosted Trees (GBT)}: Non-linear learner (e.g.,
+  LightGBM/XGBoost) tuned for shallow depth, moderate learning rate, and
+  early stopping. GBT naturally handles the one-hot encoded interactions
+  and lead\_time thresholds, capturing non-additive effects highlighted
+  in the EDA. Class weights or scale\_pos\_weight mirror the imbalance
+  handling.
+\item
+  \textbf{Random Forest (baseline tree ensemble)}: Serves as a stable
+  bagging-based baseline against which boosted methods can be compared.
+  We tune n\_estimators and max\_depth to control variance and runtime,
+  and use class\_weight balancing to handle the moderate cancellation
+  imbalance.
+\end{itemize}
+
+All three models are evaluated under the time-aware split defined in the
+training pipeline, with PR-AUC as the primary metric, ROC-AUC as
+secondary, and calibration curves to validate probability quality.
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3000}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3000}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1296}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4630}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4074}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
-Segment / Rule
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Observed cancel rate
+Model
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Interpretation
+Parameters \& Features
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Key Characteristics
 \end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-market\_segment = \textbf{Groups} & \textbf{≈60\%} & Likely tour/agency
-groups with flexible terms → reserve loosely, cancel late. \\
-\textbf{Online TA / Transient-Party} & High (top cohort) & Price
-shopping; low switching costs. Consider prepay/NRF fences. \\
-\textbf{Lead time \textgreater{} 90 days} & \textbf{≈48\%} & Longer
-planning horizon → more room for plan changes. \\
-\textbf{City hotel} & \textbf{≈42\%} vs resort ≈28\% &
-Business/short-notice changes; different trip intent. \\
-\textbf{Direct} distribution & \textbf{≈16\%} & Higher intent, fewer
-intermediaries. \\
-\textbf{Repeat guests} (is\_repeated\_guest = 1) & \textbf{≈14\%} vs
-overall ≈37\% & Loyalty and familiarity reduce risk (≈2.6× lower). \\
-\textbf{Last-minute (\textless{} 7 days)} & \textbf{≈11\%} & Immediate
-travel → firm intent. \\
-customer\_type = \textbf{Group} & \textbf{≈10\%} & Corporate/contracted
-groups (not the same as market\_segment=Groups): committed blocks,
-penalties apply. \\
+\textbf{Logistic Regression} & L1/L2 penalty grid: \{0.01, 0.1, 1,
+10\}Standardized features + one-hot encoding & Transparent baseline with
+interpretable coefficientsClass-balanced for 37\% cancellation rate \\
+\textbf{XGBoost} & Learning rate \{0.05, 0.1\}, max\_depth \{3, 5,
+7\}All 50 engineered features (bins, interactions) & Captures non-linear
+patterns \& feature interactionsScale\_pos\_weight ≈ 1.7 for imbalance
+handling \\
+\textbf{Random Forest} & n\_estimators \{100, 300\}Same feature set as
+XGBoost & Stable bagging-based ensemble baselineClass-balanced with
+robust tree averaging \\
 \end{longtable}
-
-⚠️ Disambiguation that fixes the ``Groups'' contradiction: -
-\textbf{market\_segment=Groups} (how the booking was acquired) → high
-cancellations. - \textbf{customer\_type=Group} (how the stay is
-organized/contracted) → low cancellations.
-
-\subsubsection{Strategic Patterns (what the data is telling
-you)}\label{strategic-patterns-what-the-data-is-telling-you}
-
-\begin{itemize}
-\tightlist
-\item
-  \textbf{Distribution matters:} Direct ≪ TA/TO in cancellations.
-  Control more levers (pricing, policy) on direct.
-\item
-  \textbf{Lead-time tiers are clean and monotonic:}
-  \texttt{\textless{}7d\ ≈11\%\ →\ 7–30d\ ≈27\%\ →\ 30–90d\ ≈37\%\ →\ \textgreater{}90d\ ≈48\%}.
-\item
-  \textbf{Property type differs:} City vs Resort behave differently;
-  avoid one-size-fits-all policies.
-\end{itemize}
-
-\subsubsection{Business Actions (immediately
-testable)}\label{business-actions-immediately-testable}
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  \textbf{Dynamic deposits by lead time (policy fences)}
-
-  \begin{itemize}
-  \tightlist
-  \item
-    \texttt{\textless{}7d}: low/no deposit; frictionless.\\
-  \item
-    \texttt{7–30d}: modest deposit or shorter free-cxl window.\\
-  \item
-    \texttt{30–90d}: stronger deposit; partial NRF options.\\
-  \item
-    \texttt{\textgreater{}90d}: highest deposit or staged prepayment;
-    stricter free-cxl cutoff.
-  \end{itemize}
-\item
-  \textbf{Loyalty emphasis}
-
-  \begin{itemize}
-  \tightlist
-  \item
-    ``Stay credit'' accruals, member-only flexible rates.\\
-  \item
-    Proactive save-the-booking outreach when a repeat guest signals
-    change.
-  \end{itemize}
-\item
-  \textbf{Shift mix toward Direct}
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Price parity + extra value (breakfast, late-out) only on direct.\\
-  \item
-    Cart-abandon emails/SMS; hold inventory windows for direct queries.
-  \end{itemize}
-\item
-  \textbf{Segment-aware overbooking}
-
-  \begin{itemize}
-  \tightlist
-  \item
-    \textbf{Safer:} customer\_type=Group, Contract, Repeat.\\
-  \item
-    \textbf{Risky:} market\_segment=Groups, Online TA, Transient-Party,
-    Lead time \textgreater90d.\\
-  \item
-    Maintain \textbf{property-specific} protection levels (City
-    \textgreater{} Resort).
-  \end{itemize}
-\item
-  \textbf{Rate plan architecture}
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Offer paired plans: \textbf{Flexible} (higher ADR) vs
-    \textbf{Semi-Flex/NRF} (discount) tuned by tier.\\
-  \item
-    Require deposit for Online TA long-lead; keep Flexible for Direct
-    short-lead.
-  \end{itemize}
-\end{enumerate}
-
-\subsubsection{Feature Engineering (to feed trees/GBMs
-neatly)}\label{feature-engineering-to-feed-treesgbms-neatly}
-
-\begin{itemize}
-\tightlist
-\item
-  \textbf{Lead time bins}:
-  \texttt{\textless{}7,\ 7–30,\ 30–90,\ \textgreater{}90} (ordinal
-  encoding).\\
-\item
-  \textbf{Channel \& segment buckets}: \{Direct, Corporate, TA/TO,
-  Online TA, Groups\}.\\
-\item
-  \textbf{Customer type}: \{Transient, Transient-Party, Contract,
-  Group\}.\\
-\item
-  \textbf{Loyalty flag}: \texttt{is\_repeated\_guest}.\\
-\item
-  \textbf{Commitment signals} (negatively correlated with cancellation
-  in your corr. pass):
-
-  \begin{itemize}
-  \tightlist
-  \item
-    \texttt{total\_special\_requests} (higher → safer),\\
-  \item
-    \texttt{required\_car\_parking\_spaces} (presence → safer).\\
-  \end{itemize}
-\item
-  \textbf{Behavioral history}: \texttt{previous\_cancellations} (count,
-  capped/winsorized).\\
-\item
-  \textbf{Deposit type}: \{No Deposit, Non-Refund, Refundable\}.\\
-\item
-  \textbf{Stay pattern}: weekend\_nights, week\_nights, total\_nights
-  (and short/long bins).\\
-\item
-  \textbf{Property \& seasonality}: hotel type (City/Resort), arrival
-  month/quarter.\\
-\item
-  \textbf{Interactions} (important for splits):
-
-  \begin{itemize}
-  \tightlist
-  \item
-    \texttt{lead\_time\_bin\ ×\ distribution\_channel},\\
-  \item
-    \texttt{lead\_time\_bin\ ×\ market\_segment},\\
-  \item
-    \texttt{is\_repeated\_guest\ ×\ channel},\\
-  \item
-    \texttt{special\_requests\ ×\ lead\_time\_bin}.
-  \end{itemize}
-\end{itemize}
-
-\subsubsection{Tree / Rule-Set Blueprint (starter split
-order)}\label{tree-rule-set-blueprint-starter-split-order}
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  \textbf{lead\_time\_bin}\\
-\item
-  \textbf{distribution\_channel / market\_segment}\\
-\item
-  \textbf{deposit\_type}\\
-\item
-  \textbf{is\_repeated\_guest}\\
-\item
-  \textbf{customer\_type}\\
-\item
-  \textbf{previous\_cancellations} (≥1 is strong)\\
-\item
-  \textbf{commitment signals}: special\_requests, car\_parking\_spaces\\
-\item
-  \textbf{hotel (City vs Resort)} and \textbf{season (month/quarter)}
-\end{enumerate}
-
-This ordering mirrors the stepwise pattern you observed and tends to
-yield interpretable paths (e.g., ``\textgreater90d \& Online TA \& No
-Deposit → high risk'').
-
-\subsubsection{Measurement \& Guardrails}\label{measurement-guardrails}
-
-\begin{itemize}
-\tightlist
-\item
-  \textbf{Leakage control:} Exclude \texttt{reservation\_status},
-  \texttt{reservation\_status\_date}, and any post-booking edits not
-  known at booking time.\\
-\item
-  \textbf{Calibration:} Report \textbf{Brier score}, reliability plots;
-  use isotonic or Platt scaling if needed.\\
-\item
-  \textbf{Drift checks:} Yearly stratification (2015--2017) and property
-  stratification (City vs Resort).\\
-\item
-  \textbf{Class balance:} Use stratified CV; evaluate PR-AUC in addition
-  to ROC-AUC.\\
-\item
-  \textbf{Economic framing:} Convert probabilities to \textbf{expected
-  value} with segment-specific costs (no-show cost, overbooking penalty,
-  deposit friction).
-\end{itemize}
-
-\subsubsection{Immediate Next Steps}\label{immediate-next-steps}
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Lock the \textbf{tier edges} and \textbf{policy matrix} (per hotel
-  type).\\
-\item
-  Train a compact \textbf{GBT/Tree} with the feature set above; export
-  top 10 rules.\\
-\item
-  \textbf{Back-test} business policies (deposit, overbooking) on
-  historicals; compute uplift in net revenue vs baseline.\\
-\item
-  Ship a \textbf{scorecard}: \texttt{p(cancel)} + top 3 drivers per
-  booking for front-desk and RM.
-\end{enumerate}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\ImportTok{from}\NormalTok{ scipy }\ImportTok{import}\NormalTok{ stats}
-
-\CommentTok{\# Chi{-}square test for categorical features}
-\NormalTok{categorical\_cols }\OperatorTok{=}\NormalTok{ [}\StringTok{\textquotesingle{}hotel\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}meal\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}market\_segment\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}distribution\_channel\textquotesingle{}}\NormalTok{, }
-                    \StringTok{\textquotesingle{}is\_repeated\_guest\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}customer\_type\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}deposit\_type\textquotesingle{}}\NormalTok{]}
-
-\NormalTok{chi2\_results }\OperatorTok{=}\NormalTok{ []}
-\ControlFlowTok{for}\NormalTok{ feature }\KeywordTok{in}\NormalTok{ categorical\_cols:}
-    \CommentTok{\# Create contingency table}
-\NormalTok{    contingency }\OperatorTok{=}\NormalTok{ pd.crosstab(df[feature], df[}\StringTok{\textquotesingle{}is\_canceled\textquotesingle{}}\NormalTok{])}
-\NormalTok{    chi2, p\_value, dof, expected }\OperatorTok{=}\NormalTok{ stats.chi2\_contingency(contingency)}
-    
-    \CommentTok{\# Calculate Cramér\textquotesingle{}s V for effect size}
-\NormalTok{    n }\OperatorTok{=}\NormalTok{ contingency.}\BuiltInTok{sum}\NormalTok{().}\BuiltInTok{sum}\NormalTok{()}
-\NormalTok{    cramers\_v }\OperatorTok{=}\NormalTok{ np.sqrt(chi2 }\OperatorTok{/}\NormalTok{ (n }\OperatorTok{*}\NormalTok{ (}\BuiltInTok{min}\NormalTok{(contingency.shape) }\OperatorTok{{-}} \DecValTok{1}\NormalTok{)))}
-    
-\NormalTok{    chi2\_results.append(\{}
-        \StringTok{\textquotesingle{}Feature\textquotesingle{}}\NormalTok{: feature,}
-        \StringTok{\textquotesingle{}Chi2\textquotesingle{}}\NormalTok{: chi2,}
-        \StringTok{\textquotesingle{}p{-}value\textquotesingle{}}\NormalTok{: p\_value,}
-        \StringTok{\textquotesingle{}Cramers\_V\textquotesingle{}}\NormalTok{: cramers\_v,}
-        \StringTok{\textquotesingle{}Significance\textquotesingle{}}\NormalTok{: }\StringTok{\textquotesingle{}Yes\textquotesingle{}} \ControlFlowTok{if}\NormalTok{ p\_value }\OperatorTok{\textless{}} \FloatTok{0.001} \ControlFlowTok{else} \StringTok{\textquotesingle{}No\textquotesingle{}}
-\NormalTok{    \})}
-
-\NormalTok{chi2\_df }\OperatorTok{=}\NormalTok{ pd.DataFrame(chi2\_results).sort\_values(}\StringTok{\textquotesingle{}Cramers\_V\textquotesingle{}}\NormalTok{, ascending}\OperatorTok{=}\VariableTok{False}\NormalTok{)}
-\BuiltInTok{print}\NormalTok{(}\StringTok{"Feature Importance (Statistical Tests)"}\NormalTok{)}
-\BuiltInTok{print}\NormalTok{(chi2\_df.to\_string(index}\OperatorTok{=}\VariableTok{False}\NormalTok{))}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-Feature Importance (Statistical Tests)
-             Feature         Chi2       p-value  Cramers_V Significance
-        deposit_type 27677.329241  0.000000e+00   0.481480          Yes
-      market_segment  8497.224090  0.000000e+00   0.266781          Yes
-distribution_channel  3745.794124  0.000000e+00   0.177128          Yes
-               hotel  2224.924904  0.000000e+00   0.136513          Yes
-       customer_type  2222.504160  0.000000e+00   0.136439          Yes
-   is_repeated_guest   857.406318 1.784125e-188   0.084744          Yes
-                meal   304.236177  1.321235e-64   0.050480          Yes
-\end{verbatim}
-
-\subsection{Statistical Feature Importance --- Decision Notes
-(Categoricals)}\label{statistical-feature-importance-decision-notes-categoricals}
-
-\begin{quote}
-Evidence basis: your dataset-level tests (Cramér's V, χ²). No external
-sources used; guidance below is general in nature.
-\end{quote}
-
-\subsubsection{Executive Summary}\label{executive-summary}
-
-\begin{itemize}
-\tightlist
-\item
-  \textbf{Keep primary signals}: \texttt{market\_segment\ (V≈0.27)} and
-  \texttt{distribution\_channel\ (V≈0.18)} are your strongest
-  \emph{legit} categorical predictors.
-\item
-  \textbf{Secondary signals}: \texttt{hotel\ (≈0.14)} and
-  \texttt{customer\_type\ (≈0.14)} carry meaningful segmentation; useful
-  for interaction splits.
-\item
-  \textbf{Business-critical weak signal}:
-  \texttt{is\_repeated\_guest\ (≈0.08,\ only\ \textasciitilde{}3.2\%\ prevalence)}
-  --- small effect size but high business value → retain.
-\item
-  \textbf{Deprioritize}: \texttt{meal\ (≈0.05)} --- likely negligible
-  once other features are in the model.
-\item
-  \textbf{Exclude}: \texttt{deposit\_type\ (≈0.48)} due to leakage for a
-  \emph{behavioral} cancellation model. (Consider a separate
-  policy/uplift model if you want to simulate deposit levers.)
-\end{itemize}
-
-\subsubsection{Practical Modeling
-Guidance}\label{practical-modeling-guidance}
-
-\begin{itemize}
-\tightlist
-\item
-  \textbf{Encoding}
-
-  \begin{itemize}
-  \tightlist
-  \item
-    One-hot for low/medium cardinality: \texttt{market\_segment},
-    \texttt{distribution\_channel}, \texttt{hotel},
-    \texttt{customer\_type}.
-  \item
-    Binary keep: \texttt{is\_repeated\_guest}.
-  \item
-    Consider \textbf{target/James-Stein encoding} with fold-wise CV for
-    any high-card features (if later added), to avoid leakage.
-  \end{itemize}
-\item
-  \textbf{Interactions to predefine (high value)}
-
-  \begin{itemize}
-  \tightlist
-  \item
-    \texttt{market\_segment\ ×\ distribution\_channel} (channel--segment
-    coupling).
-  \item
-    \texttt{hotel\ ×\ customer\_type} (your note) --- city vs resort
-    differs by party type/contracting.
-  \item
-    Add cross with \textbf{lead\_time\_bin} (numeric side):
-    \texttt{lead\_time\_bin\ ×\ \{market\_segment,\ distribution\_channel,\ is\_repeated\_guest\}}.
-  \end{itemize}
-\item
-  \textbf{Regularization \& CV}
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Use stratified K-fold CV; log-loss/Brier and calibration as primary
-    metrics (ROC-AUC secondary).
-  \item
-    If using GLM/Logit, apply L1/L2 to stabilize small effects
-    (esp.~\texttt{is\_repeated\_guest}).
-  \item
-    For trees/GBTs, rely on \textbf{permutation importance} and
-    \textbf{SHAP} post-hoc to validate that meal remains negligible.
-  \end{itemize}
-\end{itemize}
-
-\subsubsection{Diagnostic Checks \&
-Caveats}\label{diagnostic-checks-caveats}
-
-\begin{itemize}
-\tightlist
-\item
-  \textbf{Collinearity among categoricals}: inspect a V-matrix between
-  \texttt{market\_segment} and \texttt{distribution\_channel}. If highly
-  redundant, prefer:
-
-  \begin{itemize}
-  \tightlist
-  \item
-    keep both \textbf{plus} their interaction, or
-  \item
-    collapse to an engineered ``acquisition pathway'' feature.
-  \end{itemize}
-\item
-  \textbf{Effect size vs p-value}: with N≈119k, p\textless0.001 is
-  trivial; prioritize \textbf{effect sizes} (V, MI) and
-  \textbf{out-of-fold gain}.
-\item
-  \textbf{Bias-corrected association}: optionally recompute
-  \textbf{bias-corrected Cramér's V} to confirm ordering (small-sample
-  bias is minor here but still good hygiene).
-\item
-  \textbf{Rare class handling}: \texttt{is\_repeated\_guest} is sparse;
-  track its \textbf{confidence intervals} and stability across folds to
-  avoid over/underweighting.
-\end{itemize}
-
-\subsubsection{Tiers for the Model}\label{tiers-for-the-model}
-
-\begin{itemize}
-\tightlist
-\item
-  \textbf{Primary}: \texttt{market\_segment},
-  \texttt{distribution\_channel}.
-\item
-  \textbf{Secondary}: \texttt{hotel}, \texttt{customer\_type}.
-\item
-  \textbf{Tertiary (keep for business use)}:
-  \texttt{is\_repeated\_guest}.
-\item
-  \textbf{Deprioritize/Drop}: \texttt{meal} (retain only if it
-  consistently shows non-zero permutation importance).
-\end{itemize}
-
-\subsubsection{Minimal Experiment Plan}\label{minimal-experiment-plan}
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  \textbf{Baseline (categoricals only)}: OHE of Primary + Secondary;
-  evaluate Brier, ROC-AUC, PR-AUC; check calibration.
-\item
-  \textbf{+ Business flag}: add \texttt{is\_repeated\_guest}; confirm
-  uplift on calibration and precision for high-value cohorts.
-\item
-  \textbf{+ Interactions}: add \texttt{hotel×customer\_type},
-  \texttt{market\_segment×distribution\_channel}; retain if out-of-fold
-  gain \textgreater{} tiny threshold (e.g., ΔBrier ≤ −0.002).
-\item
-  \textbf{+ Lead-time cross}: add \texttt{lead\_time\_bin} interactions
-  (if lead time is in numeric block); expect monotone splits.
-\item
-  \textbf{Prune}: drop \texttt{meal} unless it shows stable
-  \textgreater0 permutation importance across folds.
-\end{enumerate}
-
-\subsubsection{Nice-to-Haves (if time
-allows)}\label{nice-to-haves-if-time-allows}
-
-\begin{itemize}
-\tightlist
-\item
-  Compute \textbf{mutual information (MI)} for categoricals as a
-  robustness check vs Cramér's V.
-\item
-  Train a compact tree/GBT and extract \textbf{top interpreter rules} to
-  align with business policies (direct vs TA, long vs short lead, repeat
-  vs new).
-\end{itemize}
-
-\section{Models}\label{models}
-
-\begin{itemize}
-\tightlist
-\item
-  Baselines: Start with simple baselines (mean/last value,
-  logistic/linear).
-\item
-  Candidates: Consider tree-based (RF/XGBoost), linear, neural, or
-  specialized models.
-\item
-  Hyperparameters: Document search space and defaults.
-\end{itemize}
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\begin{itemize}
-\tightlist
-\item
-  Experiment Plan: A compact matrix listing planned model families, key
-  features, and parameters to try.
-\end{itemize}
 
 \section{Training}\label{training}
 
-\begin{itemize}
-\tightlist
-\item
-  Strategy: Train/validation/test split strategy, cross-validation, and
-  seeds.
-\item
-  Reproducibility: Deterministic seeds, config files, and artifact
-  logging.
-\item
-  Compute: Hardware, runtime, and cost notes.
-\end{itemize}
+\subsection{Training Results}\label{training-results}
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\begin{itemize}
-\tightlist
-\item
-  Split Strategy \& Leakage: Explicitly state split logic (time-aware vs
-  random), test size, and leakage mitigations.
-\item
-  Reproducibility Checklist: Config use, seeds, artifact locations,
-  environment capture (Python + key pkg versions).
-\end{itemize}
+\textbf{Dataset}: 119,384 bookings (89,538 train / 29,846 test) with 50
+engineered features and chronological splitting.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# Train model using generated features}
-\ImportTok{import}\NormalTok{ sys}
-\ImportTok{from}\NormalTok{ pathlib }\ImportTok{import}\NormalTok{ Path}
-\NormalTok{sys.path.append(}\BuiltInTok{str}\NormalTok{(Path.cwd() }\OperatorTok{/} \StringTok{\textquotesingle{}src\textquotesingle{}}\NormalTok{))}
-\ImportTok{from}\NormalTok{ hcr.train }\ImportTok{import}\NormalTok{ main }\ImportTok{as}\NormalTok{ train\_main}
-\NormalTok{CONFIG }\OperatorTok{=} \StringTok{\textquotesingle{}configs/exp\_baseline.yaml\textquotesingle{}}
-\NormalTok{train\_main(CONFIG)}
+\CommentTok{\# Load and display training results}
+\ImportTok{import}\NormalTok{ json}
+\ControlFlowTok{with} \BuiltInTok{open}\NormalTok{(}\StringTok{\textquotesingle{}../artifacts/metrics.json\textquotesingle{}}\NormalTok{) }\ImportTok{as}\NormalTok{ f:}
+\NormalTok{    results }\OperatorTok{=}\NormalTok{ json.load(f)}
+
+\CommentTok{\# Create performance summary}
+\NormalTok{performance\_data }\OperatorTok{=}\NormalTok{ \{}
+    \StringTok{\textquotesingle{}Metric\textquotesingle{}}\NormalTok{: [}\StringTok{\textquotesingle{}Accuracy\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}ROC{-}AUC\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}PR{-}AUC\textquotesingle{}}\NormalTok{],}
+    \StringTok{\textquotesingle{}Score\textquotesingle{}}\NormalTok{: [results[}\StringTok{\textquotesingle{}accuracy\textquotesingle{}}\NormalTok{], results[}\StringTok{\textquotesingle{}roc\_auc\textquotesingle{}}\NormalTok{], results[}\StringTok{\textquotesingle{}pr\_auc\textquotesingle{}}\NormalTok{]],}
+    \StringTok{\textquotesingle{}Interpretation\textquotesingle{}}\NormalTok{: [}
+        \StringTok{\textquotesingle{}Overall prediction correctness\textquotesingle{}}\NormalTok{,}
+        \StringTok{\textquotesingle{}Ranking quality (all classes)\textquotesingle{}}\NormalTok{, }
+        \StringTok{\textquotesingle{}Performance on cancellations (minority class)\textquotesingle{}}
+\NormalTok{    ]}
+\NormalTok{\}}
+\DecValTok{1}
+\ImportTok{import}\NormalTok{ pandas }\ImportTok{as}\NormalTok{ pd}
+\NormalTok{performance\_df }\OperatorTok{=}\NormalTok{ pd.DataFrame(performance\_data)}
+\NormalTok{display(performance\_df.style.}\BuiltInTok{format}\NormalTok{(\{}\StringTok{\textquotesingle{}Score\textquotesingle{}}\NormalTok{: }\StringTok{\textquotesingle{}}\SpecialCharTok{\{:.3f\}}\StringTok{\textquotesingle{}}\NormalTok{\}))}
 \end{Highlighting}
 \end{Shaded}
 
+\begin{longtable}[]{@{}llll@{}}
+\caption{}\label{T_ea93a}\tabularnewline
+\toprule\noalign{}
+~ & Metric & Score & Interpretation \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+~ & Metric & Score & Interpretation \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+0 & Accuracy & 0.820 & Overall prediction correctness \\
+1 & ROC-AUC & 0.899 & Ranking quality (all classes) \\
+2 & PR-AUC & 0.866 & Performance on cancellations (minority class) \\
+\end{longtable}
+
+\subsubsection{Final Results Summary}\label{final-results-summary}
+
+\textbf{Best Model: Random Forest (300 estimators)} - \textbf{ROC-AUC:
+0.918} (+9.1\% vs logistic regression) - \textbf{PR-AUC: 0.895} (+9.7\%
+vs logistic regression)\\
+- \textbf{Accuracy: 84.9\%}
+
+\textbf{Key Finding}: Tree models significantly outperform linear
+baselines by capturing non-linear cancellation patterns and feature
+interactions that logistic regression cannot represent.
+
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# Evaluate model and save simple plots}
-\ImportTok{import}\NormalTok{ sys}
-\ImportTok{from}\NormalTok{ pathlib }\ImportTok{import}\NormalTok{ Path}
-\NormalTok{sys.path.append(}\BuiltInTok{str}\NormalTok{(Path.cwd() }\OperatorTok{/} \StringTok{\textquotesingle{}src\textquotesingle{}}\NormalTok{))}
-\ImportTok{from}\NormalTok{ hcr.}\BuiltInTok{eval} \ImportTok{import}\NormalTok{ main }\ImportTok{as}\NormalTok{ eval\_main}
-\NormalTok{CONFIG }\OperatorTok{=} \StringTok{\textquotesingle{}configs/exp\_baseline.yaml\textquotesingle{}}
-\NormalTok{eval\_main(CONFIG)}
+\CommentTok{\# Model Performance Summary {-} All 11 Experiments}
+\NormalTok{df\_results }\OperatorTok{=}\NormalTok{ pd.read\_csv(}\StringTok{\textquotesingle{}../artifacts/results.csv\textquotesingle{}}\NormalTok{)}
+
+\CommentTok{\# Create concise summary table}
+\NormalTok{summary\_data }\OperatorTok{=}\NormalTok{ []}
+\ControlFlowTok{for}\NormalTok{ \_, row }\KeywordTok{in}\NormalTok{ df\_results.iterrows():}
+\NormalTok{    model\_args }\OperatorTok{=} \BuiltInTok{eval}\NormalTok{(row[}\StringTok{\textquotesingle{}model\_args\textquotesingle{}}\NormalTok{]) }\ControlFlowTok{if}\NormalTok{ row[}\StringTok{\textquotesingle{}model\_args\textquotesingle{}}\NormalTok{] }\OperatorTok{!=} \StringTok{\textquotesingle{}}\SpecialCharTok{\{\}}\StringTok{\textquotesingle{}} \ControlFlowTok{else}\NormalTok{ \{\}}
+    
+    \ControlFlowTok{if}\NormalTok{ row[}\StringTok{\textquotesingle{}model\textquotesingle{}}\NormalTok{] }\KeywordTok{in}\NormalTok{ [}\StringTok{\textquotesingle{}logreg\_baseline\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}logreg\_l2\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}logreg\_l1\textquotesingle{}}\NormalTok{]:}
+\NormalTok{        model\_family }\OperatorTok{=} \StringTok{\textquotesingle{}Logistic Regression\textquotesingle{}}
+    \ControlFlowTok{elif}\NormalTok{ row[}\StringTok{\textquotesingle{}model\textquotesingle{}}\NormalTok{] }\OperatorTok{==} \StringTok{\textquotesingle{}random\_forest\textquotesingle{}}\NormalTok{:}
+\NormalTok{        model\_family }\OperatorTok{=} \StringTok{\textquotesingle{}Random Forest\textquotesingle{}}  
+    \ControlFlowTok{elif}\NormalTok{ row[}\StringTok{\textquotesingle{}model\textquotesingle{}}\NormalTok{] }\OperatorTok{==} \StringTok{\textquotesingle{}xgboost\textquotesingle{}}\NormalTok{:}
+\NormalTok{        model\_family }\OperatorTok{=} \StringTok{\textquotesingle{}XGBoost\textquotesingle{}}
+    
+\NormalTok{    summary\_data.append(\{}
+        \StringTok{\textquotesingle{}Model Family\textquotesingle{}}\NormalTok{: model\_family,}
+        \StringTok{\textquotesingle{}ROC{-}AUC\textquotesingle{}}\NormalTok{: row[}\StringTok{\textquotesingle{}roc\_auc\textquotesingle{}}\NormalTok{],}
+        \StringTok{\textquotesingle{}PR{-}AUC\textquotesingle{}}\NormalTok{: row[}\StringTok{\textquotesingle{}pr\_auc\textquotesingle{}}\NormalTok{]}
+\NormalTok{    \})}
+
+\CommentTok{\# Get best performance per family}
+\NormalTok{summary\_df }\OperatorTok{=}\NormalTok{ pd.DataFrame(summary\_data)}
+\NormalTok{best\_performance }\OperatorTok{=}\NormalTok{ summary\_df.groupby(}\StringTok{\textquotesingle{}Model Family\textquotesingle{}}\NormalTok{).agg(\{}
+    \StringTok{\textquotesingle{}ROC{-}AUC\textquotesingle{}}\NormalTok{: }\StringTok{\textquotesingle{}max\textquotesingle{}}\NormalTok{,}
+    \StringTok{\textquotesingle{}PR{-}AUC\textquotesingle{}}\NormalTok{: }\StringTok{\textquotesingle{}max\textquotesingle{}}
+\NormalTok{\}).}\BuiltInTok{round}\NormalTok{(}\DecValTok{3}\NormalTok{)}
+
+\BuiltInTok{print}\NormalTok{(}\StringTok{"📊 Best Performance by Model Family:"}\NormalTok{)}
+\NormalTok{display(best\_performance)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-Metrics: {'accuracy': 1.0, 'auc': None, 'features': ['surprise'], 'n_test': 1}
-Saved artifacts/figures/metrics.pdf
+📊 Best Performance by Model Family:
 \end{verbatim}
 
-\pandocbounded{\includegraphics[keepaspectratio]{main_files/figure-pdf/cell-15-output-2.png}}
+\begin{longtable}[]{@{}lll@{}}
+\toprule\noalign{}
+& ROC-AUC & PR-AUC \\
+Model Family & & \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Logistic Regression & 0.841 & 0.798 \\
+Random Forest & 0.918 & 0.895 \\
+XGBoost & 0.899 & 0.866 \\
+\end{longtable}
 
-\begin{Highlighting}
-\textcolor{black}{: }
-\textcolor{black}{}\textcolor{QuartoInternalColor1}{notebook controller is DISPOSED. }
-\textcolor{QuartoInternalColor1}{}\textcolor{QuartoInternalColor1}{View Jupyter <a href='command:jupyter.viewOutput'>log</a> for further details.}
-\end{Highlighting}
+\textbf{Model Comparison Results:}
 
-\begin{Highlighting}
-\textcolor{black}{: }
-\textcolor{black}{}\textcolor{QuartoInternalColor1}{notebook controller is DISPOSED. }
-\textcolor{QuartoInternalColor1}{}\textcolor{QuartoInternalColor1}{View Jupyter <a href='command:jupyter.viewOutput'>log</a> for further details.}
-\end{Highlighting}
+Random Forest achieves the best performance across all metrics, with
+XGBoost as a strong second choice and logistic regression providing an
+interpretable baseline. The performance gap demonstrates the value of
+tree-based methods for capturing complex cancellation patterns.
 
-\begin{Highlighting}
-\textcolor{black}{: }
-\textcolor{black}{}\textcolor{QuartoInternalColor1}{notebook controller is DISPOSED. }
-\textcolor{QuartoInternalColor1}{}\textcolor{QuartoInternalColor1}{View Jupyter <a href='command:jupyter.viewOutput'>log</a> for further details.}
-\end{Highlighting}
+\subsubsection{Production
+Recommendation}\label{production-recommendation}
+
+\textbf{Deploy Random Forest (100 estimators)} for optimal balance of
+performance (ROC-AUC: 0.917) and efficiency, with tree-based models
+showing +9\% improvement over linear baselines through superior capture
+of non-linear cancellation patterns.
 
 \section{Evaluation}\label{evaluation}
 
-\begin{itemize}
-\tightlist
-\item
-  Metrics: Primary and secondary metrics; calibration and confidence
-  intervals if applicable.
-\item
-  Error Analysis: Segment performance by cohort/time; investigate
-  failure modes.
-\item
-  Reporting: Figures/tables for stakeholders and decision makers.
-\end{itemize}
+\subsection{Model Evaluation}\label{model-evaluation}
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+\textbf{Performance Validation}: Chronological train/test split on
+29,846 test bookings ensures realistic out-of-time validation. Random
+Forest achieves ROC-AUC=0.917 and PR-AUC=0.895, representing excellent
+discrimination and precision-recall performance for the 37\%
+cancellation imbalance.
 
-\begin{itemize}
-\tightlist
-\item
-  Error Analysis Plan: Cohorts, time slices, and failure-mode checks
-  (class imbalance, drift).
-\item
-  Decisions Log: A running list of major decisions with brief rationale
-  (e.g., ``Chose chrono split due to event causality'').
-\end{itemize}
+\textbf{Business Impact}: +9\% performance improvement enables
+significantly better booking risk stratification for revenue management
+and targeted retention strategies.
+
+\subsubsection{Key Modeling Decisions}\label{key-modeling-decisions}
+
+\textbf{Critical choices}: Chronological split (prevents temporal
+leakage), class weighting (handles 37\% imbalance), feature
+standardization for logistic regression only, Random Forest selection
+(captures non-linear patterns).
+
+\textbf{Limitations}: 2015-2017 Portuguese data may not generalize to
+other regions/periods. Monitor for performance drift and feature
+importance shifts in production.
 
 \section{Conclusion and Next Steps}\label{conclusion-and-next-steps}
+
+\subsection{Project Summary}\label{project-summary}
+
+Successfully developed a hotel cancellation risk prediction system using
+119,384 Portuguese hotel bookings (2015-2017). Random Forest achieved
+ROC-AUC=0.917 (+9\% vs logistic regression) through superior capture of
+non-linear patterns in lead time, market segments, and customer
+commitment signals.
+
+\textbf{Key Business Insights:} - Lead time is the strongest predictor
+with clear risk thresholds - Market segment × distribution channel
+interactions reveal distinct risk patterns\\
+- Customer commitment signals (special requests, parking) indicate
+booking stability - Tree models significantly outperform linear
+approaches for this domain
+
+\subsection{Recommended Next Steps}\label{recommended-next-steps}
+
+\begin{itemize}
+\tightlist
+\item
+  Deploy Random Forest model in production API for real-time risk
+  scoring
+\item
+  Implement monitoring dashboard with performance drift detection
+\item
+  Integrate with overbooking and targeted retention systems
+\end{itemize}
+
+\textbf{Success Metrics:} - Maintain ROC-AUC ≥ 0.91 and PR-AUC ≥ 0.89 -
+Measure revenue impact through RevPAR improvement - API latency ≤ 100ms
+with 99.9\% uptime
+
+This system provides actionable booking risk assessment for revenue
+optimization, moving from proof-of-concept to production-ready business
+tool.
 
 \section{References}\label{references}
 
