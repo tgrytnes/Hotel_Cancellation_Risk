@@ -7,7 +7,9 @@ __pycache__/
 # Notebooks
 .ipynb_checkpoints/
 # Artifacts & data
-artifacts/
+# Drop any experiment outputs prefixed with artifacts
+artifacts*/
+Presentation/
 Assignment/
 data/processed/
 data/raw/
@@ -34,3 +36,4 @@ notebooks/*.log
 notebooks/*.out
 
 notebooks/out/
+notebooks/figures/

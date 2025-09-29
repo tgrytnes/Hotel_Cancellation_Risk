@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1758711207.93912 "/Users/thomasfey-grytnes/Documents/Artificial Intelligence - Studying/Hotel_Cancellation_Risk/notebooks/main.tex" "main.pdf" "main" 1758711209.22781 2
-  "/Users/thomasfey-grytnes/Documents/Artificial Intelligence - Studying/Hotel_Cancellation_Risk/notebooks/main.tex" 1758706603.03191 54500 db165e6eec408ee01da1d5720fd570c9 ""
+["pdflatex"] 1758992684.84516 "/Users/thomasfey-grytnes/Documents/Artificial Intelligence - Studying/Hotel_Cancellation_Risk/notebooks/main.tex" "main.pdf" "main" 1758992686.48289 2
+  "/Users/thomasfey-grytnes/Documents/Artificial Intelligence - Studying/Hotel_Cancellation_Risk/notebooks/main.tex" 1758992682.92217 122501 e43cf608cc3767eea5ab12613572a053 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc" 1254269338 2375 baa924870cfb487815765f9094cf3728 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc" 1202520719 2405 5dcf2c1b967ee25cc46c58cd52244aed ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc" 1202520719 2840 216e6e45ad352e2456e1149f28885bee ""
@@ -223,13 +223,14 @@
   "/usr/local/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1757585118 5528033 2de1857e87beaf98978b63b6132a9b29 ""
   "/usr/local/texlive/2025/texmf-var/web2c/pdftex/pdflatex.fmt" 1757436576 3605827 8a3513c66e7175c07d3805f440baadb2 ""
   "/usr/local/texlive/2025/texmf.cnf" 1741450484 577 418a7058ec8e006d8704f60ecd22c938 ""
-  "main.aux" 1758711209.15282 15045 ca0718cb17a71d7b5d11c0bea9080490 "pdflatex"
-  "main.tex" 1758706603.03191 54500 db165e6eec408ee01da1d5720fd570c9 ""
-  "main.toc" 1758711209.15513 2381 7d978028c54b8de52c0b588834fd1b40 "pdflatex"
-  "main_files/figure-pdf/cell-11-output-2.png" 1758706595.21158 48342 7e5c9ab4bd4536a1f5f079e9787d6c3f ""
-  "main_files/figure-pdf/cell-13-output-1.png" 1758706596.18429 145183 781fe100e85041191f5eff5a91a74cf4 ""
-  "main_files/figure-pdf/cell-15-output-2.png" 1758706597.23126 7800 d4672f4272948a434e20a67545a41a8f ""
-  "main_files/figure-pdf/cell-8-output-1.png" 1758706593.8597 35320 ae3a2fcfad2b831c9c821c4b44c4aebd ""
+  "main.aux" 1758992686.39201 31116 259a71f3818375b8cba6e9fa218912ec "pdflatex"
+  "main.tex" 1758992682.92217 122501 e43cf608cc3767eea5ab12613572a053 ""
+  "main.toc" 1758992686.39644 4985 b37d130bd5795b7b314daed0e31730c7 "pdflatex"
+  "main_files/figure-pdf/cell-11-output-1.png" 1758992681.90623 174831 22caafe806eadcfd534430552229b1d2 ""
+  "main_files/figure-pdf/cell-15-output-1.png" 1758992681.90679 145183 781fe100e85041191f5eff5a91a74cf4 ""
+  "main_files/figure-pdf/cell-22-output-1.png" 1758992681.9075 57680 bebddad0b1f9eed1bca60e889447446c ""
+  "main_files/figure-pdf/cell-23-output-1.png" 1758992681.90775 65068 6ae8c395772d08f79206def2c662b4db ""
+  "main_files/figure-pdf/cell-8-output-1.png" 1758992681.9052 27096 612bb666921b4414afc797c994432bef ""
   (generated)
   "main.aux"
   "main.log"
