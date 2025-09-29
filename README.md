@@ -1,140 +1,211 @@
 # Hotel Cancellation Risk (HCR): Leak-Aware Prediction at Booking Time
 
-This repository is a reusable MLOps template for AI and data science projects.  
-It provides a config-driven, hardware-independent pipeline structure with clear separation of source code, configs, data, and reports.  
-The goal is to standardize project setup, ensure reproducibility, and accelerate development across different ML projects.
+**Status: Project Complete ✓**
 
-## How to use this template
-- Do not develop directly in this repository.
-- Click “Use this template” on GitHub to create a fresh project repo.
-- Initialize and rename the new project with the initializer script (see below).
-- Keep this repo unchanged as your base template.
-
-## Environment & infrastructure
-For environment setup and infrastructure instructions (Docker images, RunPod templates, etc.), please see the dedicated infrastructure repository.
+A machine learning system for predicting hotel booking cancellations at the time of reservation, achieving 91.8% ROC-AUC through careful feature engineering and temporal validation.
 
 ---
 
-## Project initialization (rename & scaffold update)
+## Project Overview
 
-Use the initializer to set your import package, distribution name, human-readable title, and optionally register a Jupyter kernel. Run it once, right after creating your new repo from this template.
+This project develops a production-ready cancellation prediction system using 119,384 hotel bookings from two Portuguese hotels (2015-2017). By predicting cancellation probability at booking time, hotels can optimize overbooking policies, target retention campaigns, and implement risk-based deposit requirements.
 
-### Requirements
-- Python 3.10+ available as `python3`
-- Clean working tree (no uncommitted changes)
-- Run from the project root (where `pyproject.toml` and `scripts/` live)
+### Key Results
 
-### Usage (CLI)
-    python3 scripts/init_project.py --help
-
-### Options (reflects the committed script)
-| Option | Required | Default | Description |
-|-------|----------|---------|-------------|
-| `--package NAME` | yes | — | New Python import package under `src/NAME` (renames `src/yourproj` and rewrites imports/placeholders). Lowercase, letters/numbers/underscore. |
-| `--dist-name NAME` | no | same as `--package` | Distribution/project name written to packaging metadata (`pyproject.toml`). Can include dashes. |
-| `--title TEXT` | no | Titleized `dist-name` | Human-readable project title injected into README/notebooks/report stubs. |
-| `--kernel-name NAME` | no | (skip) | If provided, registers a Jupyter kernel (via `ipykernel`) for this project’s venv. |
-| `--author TEXT` | no | (leave as template) | Optional author override for metadata files if present. |
-| `--repo-url URL` | no | (leave as template) | Optional repository URL for metadata badges. |
-| `--force` | no | false | Proceed even if non-empty target paths exist (use with care). |
-
-### What it changes
-- Renames the template package: `src/yourproj` → `src/<package>` and fixes internal `yourproj` imports.
-- Updates packaging metadata in `pyproject.toml`: project name (`dist-name`), optional author/URL, and console-script placeholder if present.
-- Rewrites placeholders (project title, import path) in:
-  - `README.md` header stubs and any `docs/` stubs found,
-  - `scripts/` helpers referencing `yourproj`,
-  - `configs/` that include module paths,
-  - example notebooks in `notebooks/` (lightweight text replace in headings/metadata if applicable).
-- Optionally registers a Jupyter kernel named `--kernel-name`.
-- Leaves git history intact and does not touch your data/ or reports/.
-
-### Safety checks
-- Aborts if there are uncommitted changes unless `--force` is set.
-- Validates `--package` is a valid Python identifier.
-- Creates missing `src/<package>/__init__.py` if needed.
-
-### Examples
-
-Minimal (rename only)
-    python3 scripts/init_project.py --package hcr
-
-Explicit dist name and title
-    python3 scripts/init_project.py --package hcr --dist-name hcr --title "Hotel Cancellation Risk"
-
-Register a Jupyter kernel too
-    python3 scripts/init_project.py --package hcr --kernel-name hcr-venv
-
-Tip: Run this on a clean working tree. If you need to re-run, use `git restore -SW :/` (or `git reset --hard` if you’re sure) to revert changes first.
+- **Best Model**: Random Forest (100 estimators)
+- **Performance**: ROC-AUC 0.917 | PR-AUC 0.895 | Precision 82.3% | Recall 75.8%
+- **Improvement**: 9% ROC-AUC gain over logistic regression baseline
+- **Top Predictors**: Lead time (0.203), ADR/pricing (0.195), customer engagement signals
 
 ---
 
-## Quickstart (after initialization)
+## Dataset
 
-Once your development environment is configured (e.g., using the Docker image from the infra repo), run the training pipeline with a config file:
+**Hotel Booking Demand Dataset** from Antonio, Almeida, and Nunes (2019), containing:
+- 119,390 bookings across city and resort hotels
+- 32 variables including lead time, market segment, distribution channel, guest history
+- 37% cancellation rate (moderate class imbalance)
+- Temporal span: July 2015 - August 2017
 
-Run the full pipeline using the baseline experiment config
-    bash scripts/run_train.sh configs/exp_baseline.yaml
-
-View logs and outputs
-    tree -L 2 reports/ runs/
-
-Common iterative workflow
-    # 1) Edit/clone a config under configs/
-    # 2) Commit the config change
-    # 3) Launch: bash scripts/run_train.sh configs/your_experiment.yaml
-    # 4) Compare metrics/artifacts in reports/ and runs/
+**Source**: [Kaggle - Hotel Booking Demand](https://www.kaggle.com/datasets/jessemostipak/hotel-booking-demand)
 
 ---
 
-## Data & large files
-- Do not commit large artifacts to Git. Use object storage or DVC-style remotes.
-- `data/` stays out of version control (a `.gitignore` is provided).
-- Prefer stable, versioned datasets and record data provenance in `reports/` or `runs/`.
+## Methodology
+
+### Data Preprocessing
+
+**Leakage Prevention**:
+- Removed `reservation_status`, `reservation_status_date`, `deposit_type` (post-outcome information)
+- Removed 7 bookings with undefined market segments/channels (<0.006%)
+
+**Missing Value Treatment**:
+- `agent`, `company`: Filled with 0 (represents direct bookings)
+- `children`: Filled with 0 (logical default)
+- `country`: Preserved as "Unknown" category (13.7% cancellation rate segment)
+
+**Outlier Handling**:
+- Removed 1 negative ADR booking
+- Preserved zero-price bookings with actual stays (legitimate complimentary segment)
+- Capped extreme ADR outlier at 99.99th percentile
+
+### Feature Engineering
+
+**50 modeling features** including:
+- Raw signals: lead_time, adr, guest counts, stay duration
+- Engineered aggregations: total_stay_nights (weekend + weekday)
+- Lead time buckets: categorical risk thresholds (Last Minute, Short, Medium, Long)
+- Interaction terms: market_segment × distribution_channel combinations
+
+### Model Development
+
+**Three-Model Strategy**:
+
+1. **Logistic Regression** (baseline): Interpretable linear model with L1/L2 regularization, class balancing, and standardized features
+2. **Random Forest**: Stable bagging ensemble (100-300 trees) with class weighting
+3. **XGBoost**: Gradient boosting with hyperparameter tuning (learning rate, max depth) and scale_pos_weight for imbalance
+
+**Training Setup**:
+- Chronological split: 75% train / 25% test (time-aware validation)
+- 5-fold stratified cross-validation for hyperparameter tuning
+- Random seed 42 for reproducibility
+- Primary metric: PR-AUC (class imbalance aware)
+- Secondary metrics: ROC-AUC, Brier Score
+
+---
+
+## Results
+
+### Model Performance Comparison
+
+| Model | ROC-AUC | PR-AUC | Precision | Recall | Accuracy |
+|-------|---------|--------|-----------|--------|----------|
+| **Random Forest (100)** | 0.917 | 0.895 | 82.3% | 75.8% | 84.9% |
+| Random Forest (300) | 0.918 | 0.895 | 82.3% | 75.8% | 85.0% |
+| XGBoost (lr=0.1, d=5) | 0.888 | 0.852 | 73.6% | 75.1% | 80.8% |
+| Logistic Regression | 0.841 | 0.797 | 62.8% | 76.6% | 74.6% |
+
+### Statistical Validation
+
+- **RF vs XGBoost**: t=4.032, p=0.0050 (Significant)
+- **RF vs LogReg**: t=386.6, p<0.0001 (Highly Significant)
+- Performance differences are statistically robust across cross-validation folds
+
+### Feature Importance (Random Forest)
+
+**Top 5 Predictors**:
+1. Lead time: 0.203 (booking horizon)
+2. ADR (Average Daily Rate): 0.195 (pricing)
+3. Total special requests: 0.081 (engagement)
+4. Agent: 0.067 (distribution channel)
+5. Total stay nights: 0.044 (commitment signal)
+
+**Key Insight**: Lead time and pricing dominate predictions (40% combined importance), while customer engagement signals (special requests, parking, stay duration) form the second tier (19%).
+
+---
+
+## Production Recommendation
+
+**Deploy Random Forest with 100 estimators**
+
+**Rationale**:
+- Performance nearly identical to 300-tree variant (0.917 vs 0.918 ROC-AUC)
+- 3x faster training time
+- 67% smaller model size
+- Better trade-off for production constraints (retraining frequency, inference speed, infrastructure costs)
+
+**Business Impact**:
+- Correctly ranks 92% of cancellations higher than non-cancellations
+- 64% reduction in false alarms vs logistic regression (1,807 vs 5,007 FP)
+- For 30,000 annual bookings: ~3,200 fewer unnecessary interventions
+
+---
+
+## Limitations
+
+1. **Generalizability**: Dataset limited to Portuguese hotels (2015-2017); may not transfer to other markets or post-COVID patterns
+2. **Feature Scope**: Restricted to booking-time information; excludes external signals (reviews, events, competitor pricing)
+3. **Temporal Coverage**: Only 2 years of data insufficient for robust seasonal pattern detection
+4. **Causal Inference**: Models identify associations, not causal effects of interventions (deposits, confirmations)
+
+---
+
+## Next Steps
+
+### Immediate Deployment
+- Implement REST API for real-time scoring
+- Set up drift monitoring dashboard (feature distributions, performance metrics)
+- Conduct A/B test against current cancellation policies
+
+### Future Enhancements
+- Incorporate external data sources (local events, online reviews, dynamic pricing)
+- Expand to multi-property and multi-market validation
+- Develop causal inference framework for intervention testing (do deposits actually reduce cancellations?)
+- Implement automated retraining pipeline with concept drift detection
+
+---
+
+## Repository Structure
+
+```
+.
+├── artifacts/                  # Model outputs, metrics, predictions
+│   ├── results.csv             # All experiment results
+│   ├── features.csv            # Engineered feature table
+│   └── artifacts_*/            # Per-experiment outputs (metrics.json, predictions.json, etc.)
+├── configs/                    # Experiment configurations (YAML)
+├── data/
+│   └── raw/hotel_bookings.csv  # Source dataset
+├── notebooks/
+│   └── main.ipynb              # Complete analysis notebook (EDA, training, evaluation)
+├── src/hcr/                    # Source code package
+│   ├── features.py             # Feature engineering pipeline
+│   ├── train.py                # Model training script
+│   └── ...
+├── reports/                    # Generated reports and visualizations
+├── scripts/
+│   ├── run_train.sh            # Training pipeline entrypoint
+│   └── init_project.py         # Project initialization script
+├── pyproject.toml              # Package configuration
+└── README.md                   # This file
+```
 
 ---
 
 ## Reproducibility
-- Prefer config-only changes over code changes for experiments.
-- Always set/record seeds in configs; the pipeline logs seeds and environment details.
-- Capture package versions (`pip freeze` or `uv export`) into `reports/env.txt` on each run.
+
+All experiments use **random seed 42** for reproducibility. To replicate results:
+
+```bash
+# 1. Set up environment
+source bootstrap_env.sh
+
+# 2. Run feature engineering
+python src/hcr/features.py
+
+# 3. Train models
+bash scripts/run_train.sh configs/exp_baseline.yaml
+
+# 4. View results
+cat artifacts/results.csv
+```
 
 ---
 
-## Repository layout (post-init)
-    .
-    ├── configs/                 # Experiment configs (YAML)
-    ├── data/                    # Local data (ignored by Git)
-    ├── notebooks/               # Optional EDA / reports (title updated by init)
-    ├── reports/                 # Metrics, charts, artifacts written by runs
-    ├── runs/                    # Per-run logs, params, env snapshots
-    ├── scripts/
-    │   ├── init_project.py      # Initializer you ran
-    │   └── run_train.sh         # Pipeline entrypoint
-    ├── src/
-    │   └── <package>/           # Your import package (renamed from yourproj)
-    ├── tests/                   # Unit/integration tests
-    ├── pyproject.toml           # Packaging & tool config (name updated)
-    └── README.md                # This file (title updated)
+## References
 
----
+Antonio, N., Almeida, A., & Nunes, L. (2019). Hotel Booking Demand Datasets. *Data in Brief*, 22, 41-49. https://doi.org/10.1016/j.dib.2018.11.126
 
-## Troubleshooting
-
-Initializer refuses to run on dirty working tree
-    git status
-    git commit -m "WIP" || git stash
-    # or re-run with --force if you understand the impact
-
-Imports still reference `yourproj`
-    rg -n "yourproj" -S
-    # If anything remains, adjust manually or re-run the initializer
-
-Kernel not visible in Jupyter
-    python3 -m ipykernel install --user --name <kernel-name>
-    # Then select it in your notebook UI
+Kaggle dataset mirror: https://www.kaggle.com/datasets/jessemostipak/hotel-booking-demand
 
 ---
 
 ## License
-This template is distributed under the license specified in `LICENSE` in this repository.
+
+This project is distributed under the license specified in `LICENSE`.
+
+---
+
+## Contact
+
+For questions or collaboration inquiries, please open an issue in this repository.
